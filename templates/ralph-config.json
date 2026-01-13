@@ -1,0 +1,150 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$comment": "Ralph for Windows - Multi-Agent Configuration",
+    
+    "maxIterations": 20,
+    "warnThresholdPercent": 70,
+    "rotateThresholdPercent": 80,
+    
+    "defaultAgent": "gemini",
+    
+    "agents": {
+        "gemini": {
+            "type": "cli",
+            "command": "gemini",
+            "defaultModel": "gemini-2.5-pro",
+            "contextLimit": 1000000,
+            "description": "Google Gemini CLI - largest free context window"
+        },
+        "cursor": {
+            "type": "cli",
+            "command": "cursor-agent",
+            "defaultModel": "claude-sonnet-4-20250514",
+            "contextLimit": 100000,
+            "description": "Cursor CLI - multi-model support"
+        },
+        "openai": {
+            "type": "api",
+            "endpoint": "https://api.openai.com/v1/chat/completions",
+            "defaultModel": "gpt-4o",
+            "contextLimit": 128000,
+            "apiKeyEnvVar": "OPENAI_API_KEY",
+            "apiFormat": "openai",
+            "description": "OpenAI API - GPT-4, GPT-4o, o1"
+        },
+        "codex": {
+            "type": "api",
+            "endpoint": "https://api.openai.com/v1/chat/completions",
+            "defaultModel": "gpt-4o",
+            "contextLimit": 128000,
+            "apiKeyEnvVar": "OPENAI_API_KEY",
+            "apiFormat": "openai",
+            "description": "OpenAI Codex (now GPT-4) - code-optimized"
+        },
+        "ollama": {
+            "type": "api",
+            "endpoint": "http://localhost:11434/api/chat",
+            "defaultModel": "codellama:13b",
+            "contextLimit": 32000,
+            "apiFormat": "ollama",
+            "description": "Ollama - local models (CodeLlama, DeepSeek, etc.)"
+        },
+        "lmstudio": {
+            "type": "api",
+            "endpoint": "http://localhost:1234/v1/chat/completions",
+            "defaultModel": "loaded-model",
+            "contextLimit": 32000,
+            "apiFormat": "openai",
+            "description": "LM Studio - local models with OpenAI-compatible API"
+        },
+        "local": {
+            "type": "api",
+            "endpoint": "http://localhost:8080/v1/chat/completions",
+            "defaultModel": "default",
+            "contextLimit": 32000,
+            "apiFormat": "openai",
+            "description": "Generic local model server (LocalAI, vLLM, etc.)"
+        },
+        "network": {
+            "type": "api",
+            "endpoint": "",
+            "defaultModel": "default",
+            "contextLimit": 32000,
+            "apiFormat": "openai",
+            "description": "Network model - specify endpoint with -Endpoint"
+        },
+        "anthropic": {
+            "type": "api",
+            "endpoint": "https://api.anthropic.com/v1/messages",
+            "defaultModel": "claude-sonnet-4-20250514",
+            "contextLimit": 200000,
+            "apiKeyEnvVar": "ANTHROPIC_API_KEY",
+            "apiFormat": "anthropic",
+            "description": "Anthropic API - Claude models"
+        },
+        "azure": {
+            "type": "api",
+            "endpoint": "",
+            "defaultModel": "gpt-4o",
+            "contextLimit": 128000,
+            "apiKeyEnvVar": "AZURE_OPENAI_API_KEY",
+            "apiFormat": "azure",
+            "description": "Azure OpenAI - enterprise deployment"
+        },
+        "vscode": {
+            "type": "manual",
+            "defaultModel": "gemini-code-assist",
+            "contextLimit": 100000,
+            "description": "VS Code manual mode - Gemini Code Assist"
+        }
+    },
+    
+    "modelAliases": {
+        "gpt4": "gpt-4o",
+        "gpt4o": "gpt-4o",
+        "gpt4-turbo": "gpt-4-turbo",
+        "claude": "claude-sonnet-4-20250514",
+        "sonnet": "claude-sonnet-4-20250514",
+        "opus": "claude-opus-4-20250514",
+        "gemini": "gemini-2.5-pro",
+        "gemini-pro": "gemini-2.5-pro",
+        "gemini-flash": "gemini-2.5-flash",
+        "codellama": "codellama:13b",
+        "deepseek": "deepseek-coder:33b",
+        "llama": "llama3:8b"
+    },
+    
+    "paths": {
+        "taskFile": "RALPH_TASK.md",
+        "ralphDir": ".ralph",
+        "scriptsDir": ".ralph-scripts"
+    },
+    
+    "git": {
+        "autoCommit": true,
+        "commitPrefix": "ralph:",
+        "autoPush": false
+    },
+    
+    "logging": {
+        "verbose": false,
+        "logToolCalls": true,
+        "logTokenUsage": true,
+        "saveResponses": true
+    },
+    
+    "gutterDetection": {
+        "enabled": true,
+        "repeatThreshold": 3,
+        "fileThresholdCount": 5,
+        "fileThresholdMinutes": 10
+    },
+    
+    "api": {
+        "timeout": 300,
+        "maxTokens": 4096,
+        "temperature": 0.7,
+        "retryAttempts": 3,
+        "retryDelaySeconds": 5
+    }
+}
