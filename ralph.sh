@@ -1,6 +1,6 @@
 #!/bin/bash
 # =============================================================================
-# Ralph for Linux - Autonomous AI development with deliberate context management
+# Ralph - Cross-Platform Autonomous AI Development
 # =============================================================================
 #
 # Implements Geoffrey Huntley's Ralph Wiggum technique for multiple AI agents:
@@ -19,7 +19,7 @@
 #   ./ralph.sh ollama --model codellama # Run with Ollama
 #   ./ralph.sh watch                    # Monitor logs
 #
-# Supports: Ubuntu, Debian, Raspberry Pi OS, and other Linux distributions
+# Supports: macOS, Ubuntu, Debian, Raspberry Pi OS, Fedora, Arch, and more
 # =============================================================================
 
 set -e

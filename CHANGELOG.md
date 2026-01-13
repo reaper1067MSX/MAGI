@@ -5,6 +5,31 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2026-01-12
+
+### Added
+
+- **macOS Support** - Full support for Intel and Apple Silicon Macs
+  - Homebrew integration for package management
+  - Apple Silicon GPU acceleration with Ollama
+  - Automatic detection of Mac architecture
+  - `docs/MACOS_SETUP.md` - Comprehensive macOS setup guide
+- **Server/Cloud Support** - Deploy Ralph on any server or cloud platform
+  - AWS EC2, Google Cloud, Azure, DigitalOcean, Linode, Vultr, Hetzner
+  - CI/CD integration (GitHub Actions, GitLab CI, Jenkins)
+  - Docker and Docker Compose configurations
+  - Systemd service setup for headless operation
+  - `docs/SERVER_SETUP.md` - Complete server deployment guide
+- Interactive installer now supports macOS
+- Homebrew-based installation for Node.js, Ollama, and dependencies on macOS
+
+### Changed
+
+- `install.sh` now detects macOS and uses Homebrew automatically
+- `ralph.sh` header updated to reflect cross-platform support
+- README platform badge updated to include macOS and Cloud
+- Documentation section expanded with new guides
+
 ## [1.1.0] - 2026-01-12
 
 ### Added

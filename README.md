@@ -1,7 +1,7 @@
 # Ralph - Multi-Agent Autonomous Development
 
 <p align="center">
-  <img src="https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20Raspberry%20Pi-blue?style=flat-square" alt="Platform">
+  <img src="https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux%20%7C%20Cloud-blue?style=flat-square" alt="Platform">
   <img src="https://img.shields.io/badge/license-MIT-green?style=flat-square" alt="License">
   <img src="https://img.shields.io/github/stars/craigm26/Ralph?style=flat-square" alt="Stars">
   <img src="https://img.shields.io/github/v/release/craigm26/Ralph?style=flat-square" alt="Release">
@@ -16,10 +16,11 @@ A cross-platform implementation of [Geoffrey Huntley's Ralph Wiggum technique](h
 | Platform | Script | Status |
 |----------|--------|--------|
 | Windows | `ralph.bat` / `ralph.ps1` | ✅ Supported |
+| macOS (Intel & Apple Silicon) | `ralph.sh` | ✅ Supported |
 | Ubuntu / Debian | `ralph.sh` | ✅ Supported |
 | Raspberry Pi OS | `ralph.sh` | ✅ Supported |
 | Fedora / Arch | `ralph.sh` | ✅ Supported |
-| macOS | `ralph.sh` | 🔄 Coming Soon |
+| Cloud / VPS | `ralph.sh` | ✅ Supported |
 
 ## The Problem
 
@@ -51,6 +52,28 @@ Ralph implements a **deliberate context rotation strategy**:
 | **Network** | Network | Custom deployments | Varies |
 
 ## Quick Start
+
+### macOS
+
+```bash
+# One-line install (works on Intel and Apple Silicon)
+curl -fsSL https://raw.githubusercontent.com/craigm26/Ralph/main/install.sh | bash
+
+# Or manual setup
+git clone https://github.com/craigm26/Ralph.git
+cd Ralph
+chmod +x ralph.sh install.sh
+
+# Run with Gemini (default, free)
+npm install -g @google/gemini-cli && gemini auth login
+./ralph.sh
+
+# Or with Ollama (local - runs on GPU with Apple Silicon)
+brew install ollama
+ollama serve &
+ollama pull codellama:13b
+./ralph.sh ollama
+```
 
 ### Linux / Raspberry Pi
 
@@ -219,7 +242,9 @@ Edit `.ralph-scripts/ralph-config.json`:
 ## Documentation
 
 - [Quick Start Guide](docs/QUICKSTART.md)
+- [macOS Setup Guide](docs/MACOS_SETUP.md) - Intel and Apple Silicon
 - [Linux Setup Guide](docs/LINUX_SETUP.md) - Ubuntu, Debian, Raspberry Pi
+- [Server/Cloud Setup](docs/SERVER_SETUP.md) - AWS, GCP, DigitalOcean, CI/CD
 - [Local Models Setup](docs/LOCAL_MODELS.md)
 - [VS Code Integration](docs/VSCODE_GUIDE.md)
 

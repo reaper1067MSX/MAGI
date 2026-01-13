@@ -1,9 +1,9 @@
 #!/bin/bash
 # =============================================================================
-# Ralph for Linux - Installation Script
+# Ralph - Cross-Platform Installation Script
 # =============================================================================
 #
-# Supports: Ubuntu, Debian, Raspberry Pi OS, and other Linux distributions
+# Supports: macOS, Ubuntu, Debian, Raspberry Pi OS, Fedora, Arch, and more
 #
 # Usage:
 #   curl -fsSL https://raw.githubusercontent.com/craigm26/Ralph/main/install.sh | bash
@@ -35,6 +35,25 @@ log_error() { echo -e "${RED}✗ $1${NC}"; }
 
 # Detect OS
 detect_os() {
+    ARCH=$(uname -m)
+    KERNEL=$(uname -s)
+
+    # Detect macOS
+    if [[ "$KERNEL" == "Darwin" ]]; then
+        OS="macos"
+        OS_VERSION=$(sw_vers -productVersion)
+        OS_NAME="macOS $OS_VERSION"
+
+        # Detect Apple Silicon vs Intel
+        if [[ "$ARCH" == "arm64" ]]; then
+            IS_APPLE_SILICON="true"
+        else
+            IS_APPLE_SILICON="false"
+        fi
+        return
+    fi
+
+    # Linux detection
     if [[ -f /etc/os-release ]]; then
         . /etc/os-release
         OS=$ID
@@ -56,9 +75,6 @@ detect_os() {
             RPI_MODEL=$(cat /proc/device-tree/model | tr -d '\0')
         fi
     fi
-
-    # Detect architecture
-    ARCH=$(uname -m)
 }
 
 # Check if running as root
@@ -68,11 +84,37 @@ check_root() {
     fi
 }
 
+# Install Homebrew (macOS)
+install_homebrew() {
+    if command -v brew &> /dev/null; then
+        log_success "Homebrew already installed"
+        return 0
+    fi
+
+    log_info "Installing Homebrew..."
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+    # Add to PATH for Apple Silicon
+    if [[ "$IS_APPLE_SILICON" == "true" ]]; then
+        echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zprofile
+        eval "$(/opt/homebrew/bin/brew shellenv)"
+    fi
+
+    log_success "Homebrew installed"
+}
+
 # Install system dependencies
 install_dependencies() {
     log_info "Installing system dependencies..."
 
     case $OS in
+        macos)
+            # Check for Homebrew
+            if ! command -v brew &> /dev/null; then
+                install_homebrew
+            fi
+            brew install curl jq git
+            ;;
         ubuntu|debian|raspbian)
             sudo apt-get update -qq
             sudo apt-get install -y -qq curl jq git
@@ -105,6 +147,9 @@ install_nodejs() {
     log_info "Installing Node.js..."
 
     case $OS in
+        macos)
+            brew install node
+            ;;
         ubuntu|debian|raspbian)
             # Use NodeSource for latest LTS
             curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
@@ -133,7 +178,12 @@ install_gemini() {
         install_nodejs
     fi
 
-    sudo npm install -g @google/gemini-cli
+    # macOS doesn't need sudo for npm global installs with Homebrew
+    if [[ "$OS" == "macos" ]]; then
+        npm install -g @google/gemini-cli
+    else
+        sudo npm install -g @google/gemini-cli
+    fi
 
     if command -v gemini &> /dev/null; then
         log_success "Gemini CLI installed"
@@ -153,8 +203,16 @@ install_ollama() {
         return 0
     fi
 
-    # Ollama install script
-    curl -fsSL https://ollama.com/install.sh | sh
+    case $OS in
+        macos)
+            # Use Homebrew on macOS
+            brew install ollama
+            ;;
+        *)
+            # Use official install script for Linux
+            curl -fsSL https://ollama.com/install.sh | sh
+            ;;
+    esac
 
     if command -v ollama &> /dev/null; then
         log_success "Ollama installed"
@@ -167,11 +225,18 @@ install_ollama() {
         echo "  ollama pull qwen2.5-coder:14b  # High quality"
         echo ""
 
-        # On Raspberry Pi, suggest smaller models
+        # Platform-specific tips
         if [[ "$IS_RPI" == "true" ]]; then
             log_warning "On Raspberry Pi, use smaller models:"
             echo "  ollama pull codellama:7b"
             echo "  ollama pull phi:latest"
+        elif [[ "$OS" == "macos" ]]; then
+            log_info "On macOS, start Ollama with:"
+            echo "  ollama serve"
+            echo ""
+            if [[ "$IS_APPLE_SILICON" == "true" ]]; then
+                log_info "Apple Silicon detected - models will run on GPU"
+            fi
         fi
     else
         log_error "Ollama installation failed"
@@ -187,7 +252,12 @@ install_claude() {
         install_nodejs
     fi
 
-    sudo npm install -g @anthropic-ai/claude-code
+    # macOS doesn't need sudo for npm global installs with Homebrew
+    if [[ "$OS" == "macos" ]]; then
+        npm install -g @anthropic-ai/claude-code
+    else
+        sudo npm install -g @anthropic-ai/claude-code
+    fi
 
     if command -v claude &> /dev/null; then
         log_success "Claude Code CLI installed"
