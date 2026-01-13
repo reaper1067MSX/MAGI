@@ -1,15 +1,25 @@
 # Ralph - Multi-Agent Autonomous Development
 
 <p align="center">
-  <img src="https://img.shields.io/badge/platform-Windows-blue?style=flat-square" alt="Platform">
+  <img src="https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20Raspberry%20Pi-blue?style=flat-square" alt="Platform">
   <img src="https://img.shields.io/badge/license-MIT-green?style=flat-square" alt="License">
-  <img src="https://img.shields.io/badge/powershell-5.1%2B-blue?style=flat-square" alt="PowerShell">
   <img src="https://img.shields.io/github/stars/craigm26/Ralph?style=flat-square" alt="Stars">
+  <img src="https://img.shields.io/github/v/release/craigm26/Ralph?style=flat-square" alt="Release">
 </p>
 
-A Windows implementation of [Geoffrey Huntley's Ralph Wiggum technique](https://ghuntley.com/ralph/) for autonomous AI development with deliberate context management. Supports **10+ AI agents** including cloud APIs, local models, and networked deployments.
+A cross-platform implementation of [Geoffrey Huntley's Ralph Wiggum technique](https://ghuntley.com/ralph/) for autonomous AI development with deliberate context management. Supports **10+ AI agents** including cloud APIs, local models, and networked deployments.
 
 > *"Context is memory. malloc() exists. free() doesn't. Ralph is just accepting that reality."*
+
+## Platform Support
+
+| Platform | Script | Status |
+|----------|--------|--------|
+| Windows | `ralph.bat` / `ralph.ps1` | ✅ Supported |
+| Ubuntu / Debian | `ralph.sh` | ✅ Supported |
+| Raspberry Pi OS | `ralph.sh` | ✅ Supported |
+| Fedora / Arch | `ralph.sh` | ✅ Supported |
+| macOS | `ralph.sh` | 🔄 Coming Soon |
 
 ## The Problem
 
@@ -32,48 +42,64 @@ Ralph implements a **deliberate context rotation strategy**:
 | Agent | Type | Best For | Context |
 |-------|------|----------|---------|
 | **Gemini CLI** | Cloud CLI | Large projects, free tier | 1M+ tokens |
-| **Cursor** | Cloud CLI | Multi-model, IDE integration | 100K tokens |
+| **Claude Code** | Cloud CLI | Anthropic models | 200K tokens |
 | **OpenAI** | Cloud API | GPT-4o, o1 reasoning | 128K tokens |
 | **Anthropic** | Cloud API | Claude models | 200K tokens |
 | **Ollama** | Local | Privacy, offline work | 32K+ tokens |
 | **LM Studio** | Local | GUI, easy model switching | 32K+ tokens |
 | **LocalAI** | Local/Network | Self-hosted, OpenAI-compatible | Varies |
 | **Network** | Network | Custom deployments | Varies |
-| **VS Code** | Manual | IDE integration | 100K tokens |
 
 ## Quick Start
 
-### Installation
+### Linux / Raspberry Pi
+
+```bash
+# One-line install
+curl -fsSL https://raw.githubusercontent.com/craigm26/Ralph/main/install.sh | bash
+
+# Or manual setup
+git clone https://github.com/craigm26/Ralph.git
+cd Ralph
+chmod +x ralph.sh install.sh
+
+# Install dependencies
+sudo apt install -y curl jq git
+
+# Run with Gemini (default, free)
+npm install -g @google/gemini-cli && gemini auth login
+./ralph.sh
+
+# Or with Ollama (local)
+curl -fsSL https://ollama.com/install.sh | sh
+ollama pull codellama:13b
+./ralph.sh ollama
+
+# Or with OpenAI
+export OPENAI_API_KEY="sk-..."
+./ralph.sh openai
+```
+
+### Windows
 
 ```powershell
 # Clone the repository
 git clone https://github.com/craigm26/Ralph.git
 cd Ralph
 
-# Or download and extract
-Expand-Archive ralph-windows.zip -DestinationPath .
-```
-
-### Choose Your Agent
-
-**Option A: Gemini (Default, Free)**
-```powershell
+# Run with Gemini (default, free)
 npm install -g @google/gemini-cli
 gemini auth login
 .\ralph.bat
-```
 
-**Option B: OpenAI**
-```powershell
-$env:OPENAI_API_KEY = "sk-..."
-.\ralph.bat openai
-```
-
-**Option C: Ollama (Local)**
-```powershell
+# Or with Ollama (local)
 winget install Ollama.Ollama
 ollama pull codellama:13b
 .\ralph.bat ollama
+
+# Or with OpenAI
+$env:OPENAI_API_KEY = "sk-..."
+.\ralph.bat openai
 ```
 
 ### Define Your Task
@@ -96,7 +122,16 @@ test_command: npm test
 
 ### Run
 
+```bash
+# Linux
+./ralph.sh              # Use default agent
+./ralph.sh openai       # Use OpenAI
+./ralph.sh ollama       # Use local Ollama
+./ralph.sh watch        # Monitor progress
+```
+
 ```powershell
+# Windows
 .\ralph.bat              # Use default agent
 .\ralph.bat openai       # Use OpenAI
 .\ralph.bat ollama       # Use local Ollama
@@ -130,6 +165,20 @@ test_command: npm test
 
 ## Commands
 
+### Linux
+
+| Command | Description |
+|---------|-------------|
+| `./ralph.sh` | Run with default agent |
+| `./ralph.sh <agent>` | Run with specific agent |
+| `./ralph.sh <agent> --model <model>` | Use specific model |
+| `./ralph.sh <agent> --endpoint <url>` | Custom API endpoint |
+| `./ralph.sh <agent> --max-iterations <n>` | Limit iterations |
+| `./ralph.sh watch` | Monitor activity logs |
+| `./ralph.sh <agent> --list-models` | List available models |
+
+### Windows
+
 | Command | Description |
 |---------|-------------|
 | `ralph.bat` | Run with default agent |
@@ -139,7 +188,6 @@ test_command: npm test
 | `ralph.bat <agent> -MaxIterations <n>` | Limit iterations |
 | `ralph.bat watch` | Monitor activity logs |
 | `ralph.bat models <agent>` | List available models |
-| `ralph.bat init` | Reset Ralph state |
 
 ## Configuration
 
@@ -171,9 +219,9 @@ Edit `.ralph-scripts/ralph-config.json`:
 ## Documentation
 
 - [Quick Start Guide](docs/QUICKSTART.md)
+- [Linux Setup Guide](docs/LINUX_SETUP.md) - Ubuntu, Debian, Raspberry Pi
 - [Local Models Setup](docs/LOCAL_MODELS.md)
 - [VS Code Integration](docs/VSCODE_GUIDE.md)
-- [Configuration Reference](docs/CONFIGURATION.md)
 
 ## Choosing an Agent
 
@@ -182,8 +230,22 @@ Edit `.ralph-scripts/ralph-config.json`:
 | **Maximum Context** | Gemini CLI (1M+ tokens, free) |
 | **Best Code Quality** | OpenAI GPT-4o or Anthropic Claude |
 | **Privacy/Offline** | Ollama with DeepSeek Coder |
-| **Enterprise** | Azure OpenAI |
+| **Raspberry Pi** | Ollama with phi or codellama:7b |
 | **Cost Optimization** | Gemini CLI or local Ollama |
+
+## Raspberry Pi Tips
+
+```bash
+# Use smaller models on Pi
+ollama pull phi:latest          # 2.7GB, works on 4GB Pi
+ollama pull codellama:7b        # 4GB, needs 8GB Pi
+
+# Run with small model
+./ralph.sh ollama --model phi:latest
+
+# Or use cloud APIs (no GPU needed)
+./ralph.sh gemini
+```
 
 ## Contributing
 
@@ -193,7 +255,7 @@ Contributions are welcome! Please read our [Contributing Guide](CONTRIBUTING.md)
 
 - **Original technique**: [Geoffrey Huntley](https://ghuntley.com/ralph/)
 - **Cursor implementation**: [Agrim Singh](https://github.com/agrimsingh/ralph-wiggum-cursor)
-- **Multi-agent Windows port**: This implementation
+- **Cross-platform port**: This implementation
 
 ## License
 

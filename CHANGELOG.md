@@ -5,7 +5,34 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.0.0] - 2025-01-12
+## [1.1.0] - 2026-01-12
+
+### Added
+
+- **Linux Support** - Full cross-platform compatibility
+  - `ralph.sh` - Bash script for Linux systems
+  - `install.sh` - Interactive installer for Linux
+  - Support for Ubuntu, Debian, Fedora, Arch Linux
+  - **Raspberry Pi OS support** with optimized recommendations
+- New documentation:
+  - `docs/LINUX_SETUP.md` - Comprehensive Linux setup guide
+  - Raspberry Pi-specific tips and hardware recommendations
+  - Docker setup instructions
+  - Network/multi-machine configuration
+- Claude Code CLI agent support for Linux
+- Anthropic API agent support
+
+### Changed
+
+- README updated with cross-platform Quick Start
+- Platform support table in documentation
+- Unified command reference for Linux and Windows
+
+### Fixed
+
+- Date typo in v1.0.0 changelog (was 2025, now 2026)
+
+## [1.0.0] - 2026-01-12
 
 ### Added
 
