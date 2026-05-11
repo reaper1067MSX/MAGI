@@ -1,5 +1,5 @@
 {
-  "name": "ralph-mcp",
+  "name": "@reaper1067msx/ralph-mcp",
   "version": "1.0.0",
   "description": "Ralph Node.js MCP Server - Task-based AI orchestrator",
   "main": "dist/index.js",

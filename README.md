@@ -13,7 +13,7 @@ Ralph is a task-based AI orchestrator, now modernized as a Node.js [Model Contex
 ### Via NPM (Official)
 Once published, you can install Ralph MCP globally:
 ```bash
-npm install -g ralph-mcp
+npm install -g @reaper1067msx/ralph-mcp
 ```
 
 ### From Source
