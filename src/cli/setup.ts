@@ -10,7 +10,7 @@ export async function runSetup() {
 
   const results = [];
   
-  // 1. Gemini CLI
+  // 1. Gemini CLI Config
   const geminiConfigPath = path.join(os.homedir(), '.gemini', 'config.json');
   ui.startAction('Checking Gemini CLI config...');
   const geminiResult = await registerInConfig(geminiConfigPath, 'gemini');
@@ -23,7 +23,16 @@ export async function runSetup() {
   }
   results.push({ name: 'Gemini CLI', ...geminiResult });
 
-  // 2. Claude Desktop
+  // 2. Gemini CLI Skill (/magi)
+  ui.startAction('Installing /magi Skill for Gemini CLI...');
+  const skillResult = await installGeminiSkill();
+  if (skillResult) {
+    ui.succeedAction('Skill /magi installed successfully');
+  } else {
+    ui.failAction('Failed to install /magi skill');
+  }
+
+  // 3. Claude Desktop
   const claudeConfigPath = getClaudeConfigPath();
   ui.startAction('Checking Claude Desktop config...');
   const claudeResult = await registerInConfig(claudeConfigPath, 'claude');
@@ -38,10 +47,38 @@ export async function runSetup() {
 
   // Summary
   const successCount = results.filter(r => r.success || r.skipped).length;
-  if (successCount > 0) {
-    ui.logSystem('Setup Complete', `Successfully verified/registered in ${successCount} client(s). You can now use MAGI directly from them!`);
+  if (successCount > 0 || skillResult) {
+    ui.logSystem('Setup Complete', `Successfully verified/registered in supported clients. You can now use MAGI directly or type '/magi' in Gemini CLI!`);
   } else {
     ui.logSystem('Setup Incomplete', 'Could not find supported AI clients. You may need to manually add "magi-orchestrator" to your MCP config.');
+  }
+}
+
+async function installGeminiSkill(): Promise<boolean> {
+  try {
+    const skillsDir = path.join(os.homedir(), '.gemini', 'skills', 'magi');
+    await fs.mkdir(skillsDir, { recursive: true });
+
+    const skillContent = `---
+name: magi
+description: "Triggers the MAGI MCP server to orchestrate a task iteration."
+---
+# MAGI Orchestrator Skill
+
+## Purpose
+You are an expert task orchestrator. When the user invokes this skill, you must delegate the task execution to the MAGI MCP server.
+
+## Instructions
+1. The user will provide a task name (e.g., \`/magi fix-auth-bug\`).
+2. You MUST immediately call the \`run_ralph_iteration\` MCP tool.
+3. Pass the provided text as the \`taskName\` argument to the tool.
+4. Present the results returned by MAGI cleanly to the user. Do not ask for permission before calling the tool.
+`;
+
+    await fs.writeFile(path.join(skillsDir, 'SKILL.md'), skillContent);
+    return true;
+  } catch (error) {
+    return false;
   }
 }
 
@@ -87,9 +124,6 @@ async function registerInConfig(configPath: string, clientType: 'gemini' | 'clau
       command: process.platform === 'win32' ? 'magi-orchestrator.cmd' : 'magi-orchestrator',
       args: []
     };
-
-    // If it's claude, we might need env vars if they don't want to use ralph-config.json
-    // But for now, we rely on ralph-config.json or global env vars
 
     await fs.writeFile(configPath, JSON.stringify(config, null, 2));
     return { success: true, skipped: false };
