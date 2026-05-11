@@ -1,6 +1,8 @@
 import { Command } from 'commander';
 import chalk from 'chalk';
 import { startMcpServer } from './mcp/server.js';
+import { runSetup } from './cli/setup.js';
+import { runInteractive } from './cli/run.js';
 
 const program = new Command();
 
@@ -26,16 +28,14 @@ program
   .command('setup')
   .description('Auto-register MAGI in popular AI clients (Gemini CLI, Claude Desktop)')
   .action(async () => {
-    console.log(chalk.blue('Setup command coming soon...'));
-    // TODO: Implement setup logic
+    await runSetup();
   });
 
 program
   .command('run <task>')
   .description('Execute a MAGI task iteration interactively')
   .action(async (task) => {
-    console.log(chalk.blue(`Run command for task '${task}' coming soon...`));
-    // TODO: Implement interactive run logic
+    await runInteractive(task);
   });
 
 program.parse(process.argv);
