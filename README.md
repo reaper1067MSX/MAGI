@@ -1,47 +1,44 @@
-# Ralph MCP Server
+# MAGI Orchestrator (formerly Ralph)
 
-Ralph is a task-based AI orchestrator, now modernized as a Node.js [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) server.
+MAGI is a task-based AI orchestrator, now modernized as a Node.js [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) server.
 
 ## Features
 
 - **Multi-Agent Support**: Gemini (CLI), OpenAI (API), and Ollama (Local).
 - **Task Orchestration**: Manages state, guardrails, and progress in `.ralph` directory.
-- **MCP Integration**: Exposes Ralph logic as actionable tools for AI clients.
+- **MCP Integration**: Exposes MAGI logic as actionable tools for AI clients.
 
 ## Installation
 
 ### Via NPM (Official)
-Once published, you can install Ralph MCP globally:
 ```bash
-npm install -g @reaper1067msx/ralph-mcp
+npm install -g magi-orchestrator
 ```
 
-### From Source
+## Usage
+
+After installation, you can use the `magi` command:
+
 ```bash
-git clone https://github.com/craigm26/Ralph.git
-cd Ralph
-npm install
-npm run build
-npm link # For local development
+magi --help
 ```
 
-## Usage as MCP Server
+### Register as MCP Server
 
-### Register in Gemini CLI
+#### Gemini CLI
 Add the following to your config:
 
 ```json
 {
   "mcpServers": {
-    "ralph": {
-      "command": "node",
-      "args": ["C:/absolute/path/to/Ralph/dist/index.js"]
+    "magi": {
+      "command": "magi-orchestrator"
     }
   }
 }
 ```
 
-### Tools Provided
+## Tools Provided
 - `run_ralph_iteration(taskName, agentName?)`: Runs a single loop iteration for the specified task.
 - `get_ralph_status()`: Returns the engine status and state directory.
 
@@ -55,11 +52,6 @@ Create a `ralph-config.json` in your working directory:
     {
       "name": "gemini-cli",
       "type": "gemini"
-    },
-    {
-      "name": "my-gpt4",
-      "type": "openai",
-      "model": "gpt-4"
     }
   ],
   "defaultAgent": "gemini-cli",
