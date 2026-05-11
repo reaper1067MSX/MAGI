@@ -20,7 +20,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/craigm26/Ralph.git"
+    "url": "git+https://github.com/reaper1067MSX/MAGI.git"
   },
   "keywords": [
     "mcp",
@@ -34,9 +34,9 @@
   "author": "Santiago Arguello",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/craigm26/Ralph/issues"
+    "url": "https://github.com/reaper1067MSX/MAGI/issues"
   },
-  "homepage": "https://github.com/craigm26/Ralph#readme",
+  "homepage": "https://github.com/reaper1067MSX/MAGI#readme",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.1",
     "zod": "^3.23.8"
