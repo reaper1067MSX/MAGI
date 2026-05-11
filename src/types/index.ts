@@ -17,9 +17,10 @@ export interface AgentAdapter {
 
 export interface AgentConfig {
   name: string;
-  type: 'gemini' | 'openai' | 'ollama';
+  type: 'gemini' | 'openai' | 'ollama' | 'claude';
   model?: string;
   endpoint?: string;
+  apiKey?: string;
 }
 
 export interface RalphConfig {

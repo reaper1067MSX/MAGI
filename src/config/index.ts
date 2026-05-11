@@ -5,9 +5,10 @@ import * as path from 'node:path';
 
 export const AgentConfigSchema = z.object({
   name: z.string(),
-  type: z.enum(['gemini', 'openai', 'ollama']),
+  type: z.enum(['gemini', 'openai', 'ollama', 'claude']),
   model: z.string().optional(),
-  endpoint: z.string().url().optional()
+  endpoint: z.string().url().optional(),
+  apiKey: z.string().optional()
 });
 
 export const RalphConfigSchema = z.object({

@@ -7,6 +7,7 @@ import {
 import { RalphEngine } from '../engine/RalphEngine.js';
 import { loadConfig } from '../config/index.js';
 import { GeminiAgent } from '../agents/GeminiAgent.js';
+import { ClaudeAgent } from '../agents/ClaudeAgent.js';
 import { OpenAIAgent, OllamaAgent } from '../agents/OpenAIAgent.js';
 import type { AgentAdapter } from '../types/index.js';
 import chalk from 'chalk';
@@ -29,6 +30,7 @@ export async function startMcpServer() {
 
   const agents: Record<string, AgentAdapter> = {
     'gemini-cli': new GeminiAgent(),
+    'claude': new ClaudeAgent(),
     'openai': new OpenAIAgent(),
     'ollama': new OllamaAgent(),
   };

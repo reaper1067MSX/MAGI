@@ -1,29 +1,31 @@
 import { BaseAgent } from './BaseAgent.js';
 import type { AgentContext, IterationResult } from '../types/index.js';
-import { exec } from 'node:child_process';
-import { promisify } from 'node:util';
-
-const execPromise = promisify(exec);
+import { GoogleGenerativeAI } from '@google/generative-ai';
 
 export class GeminiAgent extends BaseAgent {
-  constructor() {
-    super('gemini-cli');
+  private apiKey: string;
+  private modelName: string;
+
+  constructor(apiKey?: string, modelName: string = 'gemini-2.5-pro') {
+    super('gemini');
+    this.apiKey = apiKey || process.env.GEMINI_API_KEY || '';
+    this.modelName = modelName;
   }
 
   async invoke(prompt: string, context: AgentContext): Promise<IterationResult> {
     try {
-      // In a real scenario, we'd escape the prompt or use a temp file
-      // For this refactor, we simulate the CLI call
-      const { stdout, stderr } = await execPromise(`gemini-cli "${prompt.replace(/"/g, '\\"')}"`);
-      
-      if (stderr && !stdout) {
-        return this.createErrorResult(`Gemini CLI error: ${stderr}`);
+      if (!this.apiKey) {
+         return this.createErrorResult('GEMINI_API_KEY is missing.');
       }
 
-      return this.createSuccessResult('Gemini processed the iteration', stdout);
+      const ai = new GoogleGenerativeAI(this.apiKey);
+      const model = ai.getGenerativeModel({ model: this.modelName });
+      const result = await model.generateContent(prompt);
+      const response = result.response.text();
+
+      return this.createSuccessResult(`Gemini (${this.modelName}) processed the iteration.`, response);
     } catch (error) {
-      // Fallback for demo/development if CLI isn't installed
-      return this.createSuccessResult('Gemini (Simulated) processed the iteration', 'Next step: Continue refactoring.');
+      return this.createErrorResult(`Gemini API error: ${(error as Error).message}`, error as Error);
     }
   }
 }
