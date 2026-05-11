@@ -1,6 +1,6 @@
-# Quick Start - Ralph Multi-Agent
+﻿# Quick Start - MAGI Multi-Agent
 
-Get Ralph running in 5 minutes with any AI agent.
+Get MAGI-AI running in 5 minutes with any AI agent.
 
 ## Choose Your Agent
 
@@ -22,7 +22,7 @@ npm install -g @google/gemini-cli
 gemini auth login
 
 # 2. Run
-.\ralph.bat
+magi-ai run "my-task"
 ```
 
 ### Option B: OpenAI
@@ -32,7 +32,7 @@ gemini auth login
 $env:OPENAI_API_KEY = "sk-..."
 
 # 2. Run
-.\ralph.bat openai
+magi-ai run "my-task" openai
 ```
 
 ### Option C: Ollama (Local)
@@ -45,19 +45,19 @@ winget install Ollama.Ollama
 ollama pull codellama:13b
 
 # 3. Run
-.\ralph.bat ollama
+magi-ai run "my-task" ollama
 ```
 
 ### Option D: Network Model
 
 ```powershell
 # Point to any OpenAI-compatible API
-.\ralph.bat network -Endpoint http://192.168.1.100:8080/v1/chat/completions
+magi-ai run "my-task" network -Endpoint http://192.168.1.100:8080/v1/chat/completions
 ```
 
 ## Define Your Task
 
-Edit `RALPH_TASK.md`:
+Edit `MAGI_TASK.md`:
 
 ```markdown
 ---
@@ -77,20 +77,20 @@ test_command: npm test
 
 ```powershell
 # Run
-.\ralph.bat
+magi-ai run "my-task"
 
 # Watch progress
-.\ralph.bat watch
+magi-ai run "my-task" watch
 ```
 
 ## When Things Go Wrong
 
 ```powershell
 # Check errors
-Get-Content .ralph\errors.log
+Get-Content .MAGI\errors.log
 
 # Add guardrail to prevent repeat
-notepad .ralph\guardrails.md
+notepad .MAGI\guardrails.md
 ```
 
 Add this format:
@@ -104,9 +104,10 @@ Add this format:
 
 | Command | What |
 |---------|------|
-| `ralph.bat` | Run default |
-| `ralph.bat openai` | Use OpenAI |
-| `ralph.bat ollama -Model codellama:34b` | Use specific model |
-| `ralph.bat watch` | Monitor logs |
-| `ralph.bat models ollama` | List models |
-| `ralph.bat init` | Reset state |
+| `MAGI.bat` | Run default |
+| `MAGI.bat openai` | Use OpenAI |
+| `MAGI.bat ollama -Model codellama:34b` | Use specific model |
+| `MAGI.bat watch` | Monitor logs |
+| `MAGI.bat models ollama` | List models |
+| `MAGI.bat init` | Reset state |
+

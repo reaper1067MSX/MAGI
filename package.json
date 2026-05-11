@@ -1,12 +1,12 @@
 {
   "name": "magi-orchestrator",
-  "version": "1.1.2",
+  "version": "1.2.0",
   "description": "MAGI (formerly Ralph) - Task-based AI orchestrator and MCP server",
   "main": "dist/index.js",
   "type": "module",
   "bin": {
-    "magi": "./bin/ralph-mcp.js",
-    "magi-orchestrator": "./bin/ralph-mcp.js"
+    "magi-ai": "./bin/magi-mcp.js",
+    "magi-orchestrator": "./bin/magi-mcp.js"
   },
   "files": [
     "dist",
@@ -17,7 +17,9 @@
   "scripts": {
     "build": "tsc",
     "test": "vitest run",
-    "prepare": "npm run build"
+    "prepare": "npm run build",
+    "postinstall": "node ./bin/magi-mcp.js setup",
+    "release": "node ./scripts/bump-version.js && npm publish"
   },
   "repository": {
     "type": "git",
@@ -29,7 +31,6 @@
     "ai",
     "orchestrator",
     "magi",
-    "ralph",
     "gemini",
     "openai",
     "ollama"

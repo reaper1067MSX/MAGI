@@ -1,6 +1,6 @@
-# Ralph for macOS
+﻿# MAGI for macOS
 
-Complete guide for running Ralph on macOS (Intel and Apple Silicon).
+Complete guide for running MAGI on macOS (Intel and Apple Silicon).
 
 ## Requirements
 
@@ -13,15 +13,15 @@ Complete guide for running Ralph on macOS (Intel and Apple Silicon).
 ### One-Line Install
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/craigm26/Ralph/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/craigm26/MAGI/main/install.sh | bash
 ```
 
 ### Manual Installation
 
 ```bash
 # Clone repository
-git clone https://github.com/craigm26/Ralph.git
-cd Ralph
+git clone https://github.com/craigm26/MAGI.git
+cd MAGI
 
 # Run installer
 chmod +x install.sh
@@ -35,7 +35,7 @@ chmod +x install.sh
 Google's Gemini CLI is the easiest to set up:
 
 ```bash
-# Install via Ralph installer
+# Install via MAGI installer
 ./install.sh --agent gemini
 
 # Or manually
@@ -48,7 +48,7 @@ gemini auth login
 Run AI models locally on your Mac:
 
 ```bash
-# Install via Ralph installer
+# Install via MAGI installer
 ./install.sh --agent ollama
 
 # Or manually via Homebrew
@@ -75,7 +75,7 @@ Apple Silicon Macs run models on GPU (Metal) for excellent performance.
 ### 3. Claude Code CLI
 
 ```bash
-# Install via Ralph installer
+# Install via MAGI installer
 ./install.sh --agent claude
 
 # Or manually
@@ -85,7 +85,7 @@ npm install -g @anthropic-ai/claude-code
 export ANTHROPIC_API_KEY="your-key-here"
 ```
 
-## Running Ralph
+## Running MAGI
 
 ### Basic Usage
 
@@ -94,7 +94,7 @@ export ANTHROPIC_API_KEY="your-key-here"
 cd ~/Projects/my-app
 
 # Create task file
-cat > RALPH_TASK.md << 'EOF'
+cat > MAGI_TASK.md << 'EOF'
 ---
 task: Add user authentication
 test_command: npm test
@@ -112,41 +112,39 @@ Implement user login and registration.
 4. [ ] All tests pass
 EOF
 
-# Run Ralph
-./ralph.sh
+# Run MAGI
+magi-ai run "my-task"
 ```
 
 ### With Specific Agent
 
 ```bash
 # Use Gemini
-./ralph.sh --agent gemini
+magi-ai run "my-task" --agent gemini
 
 # Use Ollama with specific model
-./ralph.sh --agent ollama --model codellama:13b
+magi-ai run "my-task" --agent ollama --model codellama:13b
 
 # Use Claude
-./ralph.sh --agent claude
+magi-ai run "my-task" --agent claude
 ```
 
 ## Configuration
 
-Create `~/.ralph/config.json`:
+Create `magi-config.json`:
 
 ```json
 {
     "defaultAgent": "gemini",
-    "maxIterations": 20,
-    "agents": {
-        "ollama": {
+    "agents": [
+        {
+            "name": "ollama",
+            "type": "ollama",
             "endpoint": "http://localhost:11434/api/chat",
-            "defaultModel": "codellama:13b"
+            "model": "codellama:13b"
         }
-    },
-    "git": {
-        "autoCommit": true,
-        "commitPrefix": "ralph:"
-    }
+    ],
+    "stateDirectory": ".magi"
 }
 ```
 
@@ -180,13 +178,13 @@ Ollama manages memory automatically:
 
 ## Homebrew Setup
 
-Ralph uses Homebrew for package management:
+MAGI uses Homebrew for package management:
 
 ```bash
 # Check if installed
 brew --version
 
-# Install if needed (Ralph installer does this automatically)
+# Install if needed (MAGI installer does this automatically)
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
 # Apple Silicon: Add to path
@@ -229,11 +227,11 @@ brew install node
 node --version  # Should be 18+
 ```
 
-### Permission Denied on ralph.sh
+### Permission Denied on magi.sh
 
 ```bash
-chmod +x ralph.sh
-./ralph.sh
+chmod +x magi.sh
+magi-ai run "my-task"
 ```
 
 ### Model Too Slow
@@ -257,15 +255,15 @@ Works with any terminal:
 
 ```bash
 # Open terminal in VS Code
-# Run Ralph from integrated terminal
-./ralph.sh
+# Run MAGI from integrated terminal
+magi-ai run "my-task"
 ```
 
 ### Cursor
 
 ```bash
 # Same as VS Code
-./ralph.sh
+magi-ai run "my-task"
 ```
 
 ## Launchd Service (Optional)
@@ -303,3 +301,4 @@ launchctl load ~/Library/LaunchAgents/com.ollama.server.plist
 1. Read [QUICKSTART.md](QUICKSTART.md) for task examples
 2. Check [LOCAL_MODELS.md](LOCAL_MODELS.md) for model comparisons
 3. Join our community on GitHub Discussions
+

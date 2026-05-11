@@ -1,27 +1,27 @@
-# Ralph for Servers & Cloud
+﻿# MAGI for Servers & Cloud
 
-Deploy Ralph on cloud VMs, VPS, and headless servers for CI/CD pipelines and autonomous development.
+Deploy MAGI on cloud VMs, VPS, and headless servers for CI/CD pipelines and autonomous development.
 
 ## Supported Platforms
 
 | Platform | Tested | Notes |
 |----------|--------|-------|
-| AWS EC2 | ✓ | Ubuntu, Amazon Linux |
-| Google Cloud | ✓ | Compute Engine |
-| Azure | ✓ | Virtual Machines |
-| DigitalOcean | ✓ | Droplets |
-| Linode | ✓ | Compute Instances |
-| Vultr | ✓ | Cloud Compute |
-| Hetzner | ✓ | Cloud Servers |
-| Oracle Cloud | ✓ | Free tier available |
-| Raspberry Pi | ✓ | See [LINUX_SETUP.md](LINUX_SETUP.md) |
+| AWS EC2 | âœ“ | Ubuntu, Amazon Linux |
+| Google Cloud | âœ“ | Compute Engine |
+| Azure | âœ“ | Virtual Machines |
+| DigitalOcean | âœ“ | Droplets |
+| Linode | âœ“ | Compute Instances |
+| Vultr | âœ“ | Cloud Compute |
+| Hetzner | âœ“ | Cloud Servers |
+| Oracle Cloud | âœ“ | Free tier available |
+| Raspberry Pi | âœ“ | See [LINUX_SETUP.md](LINUX_SETUP.md) |
 
 ## Quick Start
 
 ### One-Line Install
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/craigm26/Ralph/main/install.sh | bash -s -- --agent gemini
+curl -fsSL https://raw.githubusercontent.com/craigm26/MAGI/main/install.sh | bash -s -- --agent gemini
 ```
 
 ### SSH Installation
@@ -30,12 +30,12 @@ curl -fsSL https://raw.githubusercontent.com/craigm26/Ralph/main/install.sh | ba
 # Connect to your server
 ssh user@your-server
 
-# Install Ralph with Gemini
-curl -fsSL https://raw.githubusercontent.com/craigm26/Ralph/main/install.sh | bash -s -- --agent gemini
+# Install MAGI with Gemini
+curl -fsSL https://raw.githubusercontent.com/craigm26/MAGI/main/install.sh | bash -s -- --agent gemini
 
 # Or clone and install manually
-git clone https://github.com/craigm26/Ralph.git
-cd Ralph
+git clone https://github.com/craigm26/MAGI.git
+cd MAGI
 ./install.sh --all
 ```
 
@@ -104,33 +104,33 @@ Recommended instances:
 
 ```bash
 # Using nohup
-nohup ./ralph.sh > ralph.log 2>&1 &
+nohup magi-ai run "deployment" > MAGI.log 2>&1 &
 
 # Using screen
-screen -S ralph
-./ralph.sh
+screen -S MAGI
+magi-ai run "deployment"
 # Ctrl+A, D to detach
 
 # Using tmux
-tmux new -s ralph
-./ralph.sh
+tmux new -s MAGI
+magi-ai run "deployment"
 # Ctrl+B, D to detach
 ```
 
 ### Systemd Service
 
-Create `/etc/systemd/system/ralph.service`:
+Create `/etc/systemd/system/MAGI.service`:
 
 ```ini
 [Unit]
-Description=Ralph Autonomous Development
+Description=MAGI Autonomous Development
 After=network.target
 
 [Service]
 Type=simple
 User=ubuntu
 WorkingDirectory=/home/ubuntu/my-project
-ExecStart=/home/ubuntu/Ralph/ralph.sh
+ExecStart=magi-ai run "daily-task"
 Restart=on-failure
 RestartSec=10
 Environment=GEMINI_API_KEY=your-key-here
@@ -143,24 +143,24 @@ Enable and start:
 
 ```bash
 sudo systemctl daemon-reload
-sudo systemctl enable ralph
-sudo systemctl start ralph
-sudo journalctl -u ralph -f  # View logs
+sudo systemctl enable MAGI
+sudo systemctl start MAGI
+sudo journalctl -u MAGI -f  # View logs
 ```
 
 ### Cron Jobs
 
-Run Ralph on schedule:
+Run MAGI on schedule:
 
 ```bash
 # Edit crontab
 crontab -e
 
 # Run daily at 2 AM
-0 2 * * * cd /home/ubuntu/my-project && /home/ubuntu/Ralph/ralph.sh >> /var/log/ralph.log 2>&1
+0 2 * * * cd /home/ubuntu/my-project && magi-ai run "daily-task" >> /var/log/MAGI.log 2>&1
 
 # Run every 4 hours
-0 */4 * * * cd /home/ubuntu/my-project && /home/ubuntu/Ralph/ralph.sh >> /var/log/ralph.log 2>&1
+0 */4 * * * cd /home/ubuntu/my-project && magi-ai run "daily-task" >> /var/log/MAGI.log 2>&1
 ```
 
 ## CI/CD Integration
@@ -168,7 +168,7 @@ crontab -e
 ### GitHub Actions
 
 ```yaml
-name: Ralph Development
+name: MAGI Development
 on:
   workflow_dispatch:
     inputs:
@@ -177,18 +177,18 @@ on:
         required: true
 
 jobs:
-  ralph:
+  MAGI:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install Ralph
+      - name: Install MAGI
         run: |
-          curl -fsSL https://raw.githubusercontent.com/craigm26/Ralph/main/install.sh | bash -s -- --agent gemini
+          curl -fsSL https://raw.githubusercontent.com/craigm26/MAGI/main/install.sh | bash -s -- --agent gemini
 
       - name: Create Task
         run: |
-          cat > RALPH_TASK.md << 'EOF'
+          cat > MAGI_TASK.md << 'EOF'
           ---
           task: ${{ github.event.inputs.task }}
           test_command: npm test
@@ -199,27 +199,27 @@ jobs:
           ${{ github.event.inputs.task }}
           EOF
 
-      - name: Run Ralph
+      - name: Run MAGI
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-        run: ./ralph.sh
+        run: magi-ai run "deployment"
 
       - name: Create PR
         uses: peter-evans/create-pull-request@v5
         with:
-          title: "Ralph: ${{ github.event.inputs.task }}"
-          branch: ralph-${{ github.run_id }}
+          title: "MAGI: ${{ github.event.inputs.task }}"
+          branch: MAGI-${{ github.run_id }}
 ```
 
 ### GitLab CI
 
 ```yaml
-ralph:
+MAGI:
   image: ubuntu:22.04
   script:
     - apt-get update && apt-get install -y curl git
-    - curl -fsSL https://raw.githubusercontent.com/craigm26/Ralph/main/install.sh | bash -s -- --agent gemini
-    - ./ralph.sh
+    - curl -fsSL https://raw.githubusercontent.com/craigm26/MAGI/main/install.sh | bash -s -- --agent gemini
+    - magi-ai run "deployment"
   artifacts:
     paths:
       - "*.md"
@@ -237,15 +237,15 @@ pipeline {
     }
 
     stages {
-        stage('Install Ralph') {
+        stage('Install MAGI') {
             steps {
-                sh 'curl -fsSL https://raw.githubusercontent.com/craigm26/Ralph/main/install.sh | bash -s -- --agent gemini'
+                sh 'curl -fsSL https://raw.githubusercontent.com/craigm26/MAGI/main/install.sh | bash -s -- --agent gemini'
             }
         }
 
-        stage('Run Ralph') {
+        stage('Run MAGI') {
             steps {
-                sh './ralph.sh'
+                sh 'magi-ai run "deployment"'
             }
         }
     }
@@ -270,12 +270,12 @@ RUN apt-get update && apt-get install -y \
 # Install Gemini CLI
 RUN npm install -g @google/gemini-cli
 
-# Install Ralph
-RUN git clone https://github.com/craigm26/Ralph.git /opt/ralph
-WORKDIR /opt/ralph
+# Install MAGI
+RUN git clone https://github.com/craigm26/MAGI.git /opt/MAGI
+WORKDIR /opt/MAGI
 
 # Set entrypoint
-ENTRYPOINT ["./ralph.sh"]
+ENTRYPOINT ["magi-ai run "deployment""]
 ```
 
 ### Docker Compose
@@ -284,11 +284,11 @@ ENTRYPOINT ["./ralph.sh"]
 version: '3.8'
 
 services:
-  ralph:
+  MAGI:
     build: .
     volumes:
       - ./project:/workspace
-      - ./RALPH_TASK.md:/workspace/RALPH_TASK.md
+      - ./MAGI_TASK.md:/workspace/MAGI_TASK.md
     environment:
       - GEMINI_API_KEY=${GEMINI_API_KEY}
     working_dir: /workspace
@@ -308,14 +308,14 @@ volumes:
 
 ```bash
 # Build
-docker build -t ralph .
+docker build -t MAGI .
 
 # Run with Gemini
-docker run -v $(pwd):/workspace -e GEMINI_API_KEY=your-key ralph
+docker run -v $(pwd):/workspace -e GEMINI_API_KEY=your-key MAGI
 
 # Run with Ollama (separate container)
 docker-compose up -d ollama
-docker run --network host -v $(pwd):/workspace ralph --agent ollama
+docker run --network host -v $(pwd):/workspace MAGI --agent ollama
 ```
 
 ## Environment Variables
@@ -326,8 +326,8 @@ docker run --network host -v $(pwd):/workspace ralph --agent ollama
 | `ANTHROPIC_API_KEY` | Anthropic API key | For Claude |
 | `OPENAI_API_KEY` | OpenAI API key | For OpenAI |
 | `OLLAMA_HOST` | Ollama endpoint | Default: localhost:11434 |
-| `RALPH_MAX_ITERATIONS` | Max iterations | Default: 20 |
-| `RALPH_GIT_AUTOCOMMIT` | Auto-commit changes | Default: true |
+| `MAGI_MAX_ITERATIONS` | Max iterations | Default: 20 |
+| `MAGI_GIT_AUTOCOMMIT` | Auto-commit changes | Default: true |
 
 ## Security Considerations
 
@@ -339,10 +339,10 @@ export GEMINI_API_KEY="your-key"
 
 # Or use secret managers
 # AWS Secrets Manager
-aws secretsmanager get-secret-value --secret-id ralph/gemini-key
+aws secretsmanager get-secret-value --secret-id MAGI/gemini-key
 
 # HashiCorp Vault
-vault kv get -field=api_key secret/ralph/gemini
+vault kv get -field=api_key secret/MAGI/gemini
 ```
 
 ### Network Security
@@ -360,8 +360,8 @@ sudo ufw allow from 10.0.0.0/8 to any port 11434
 
 ```bash
 # Secure configuration files
-chmod 600 ~/.ralph/config.json
-chmod 700 ~/.ralph
+chmod 600 ~/.MAGI/config.json
+chmod 700 ~/.MAGI
 
 # Git credentials
 chmod 600 ~/.gitconfig
@@ -373,10 +373,10 @@ chmod 600 ~/.gitconfig
 
 ```bash
 # Send logs to file
-./ralph.sh 2>&1 | tee -a /var/log/ralph/$(date +%Y%m%d).log
+magi-ai run "deployment" 2>&1 | tee -a /var/log/MAGI/$(date +%Y%m%d).log
 
 # With timestamps
-./ralph.sh 2>&1 | while read line; do echo "$(date '+%Y-%m-%d %H:%M:%S') $line"; done | tee -a ralph.log
+magi-ai run "deployment" 2>&1 | while read line; do echo "$(date '+%Y-%m-%d %H:%M:%S') $line"; done | tee -a MAGI.log
 ```
 
 ### Health Checks
@@ -452,7 +452,7 @@ free -h
 pkill ollama
 
 # Use cloud-based agent
-./ralph.sh --agent gemini
+magi-ai run "deployment" --agent gemini
 ```
 
 ### Disk Space
@@ -465,7 +465,7 @@ df -h
 ollama rm codellama:34b
 
 # Clean old logs
-find /var/log/ralph -mtime +7 -delete
+find /var/log/MAGI -mtime +7 -delete
 ```
 
 ## Cloud-Specific Guides
@@ -476,7 +476,7 @@ find /var/log/ralph -mtime +7 -delete
 # Install on Amazon Linux 2
 sudo yum update -y
 sudo yum install -y git
-curl -fsSL https://raw.githubusercontent.com/craigm26/Ralph/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/craigm26/MAGI/main/install.sh | bash
 
 # IAM role for Secrets Manager (optional)
 aws sts get-caller-identity
@@ -487,7 +487,7 @@ aws sts get-caller-identity
 ```bash
 # Install on Compute Engine
 sudo apt update
-curl -fsSL https://raw.githubusercontent.com/craigm26/Ralph/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/craigm26/MAGI/main/install.sh | bash
 
 # Use Workload Identity for Gemini (optional)
 gcloud auth application-default login
@@ -498,7 +498,7 @@ gcloud auth application-default login
 ```bash
 # Install on Droplet
 apt update
-curl -fsSL https://raw.githubusercontent.com/craigm26/Ralph/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/craigm26/MAGI/main/install.sh | bash
 
 # Configure firewall
 ufw allow ssh
@@ -511,3 +511,10 @@ ufw enable
 2. Check [LOCAL_MODELS.md](LOCAL_MODELS.md) for model comparisons
 3. Set up monitoring and alerting
 4. Consider GPU instances for large local models
+
+ces for large local models
+
+L_MODELS.md) for model comparisons
+3. Set up monitoring and alerting
+4. Consider GPU instances for large local models
+

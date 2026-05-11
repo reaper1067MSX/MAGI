@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import type { RalphConfig, AgentConfig } from '../types/index.js';
+import type { MagiConfig, AgentConfig } from '../types/index.js';
 import * as fs from 'node:fs/promises';
 import * as path from 'node:path';
 
@@ -11,17 +11,17 @@ export const AgentConfigSchema = z.object({
   apiKey: z.string().optional()
 });
 
-export const RalphConfigSchema = z.object({
+export const MagiConfigSchema = z.object({
   agents: z.array(AgentConfigSchema),
   defaultAgent: z.string(),
-  stateDirectory: z.string().default('.ralph')
+  stateDirectory: z.string().default('.magi')
 });
 
-export async function loadConfig(configPath: string): Promise<RalphConfig> {
+export async function loadConfig(configPath: string): Promise<MagiConfig> {
   try {
     const data = await fs.readFile(configPath, 'utf8');
     const parsed = JSON.parse(data);
-    return RalphConfigSchema.parse(parsed);
+    return MagiConfigSchema.parse(parsed);
   } catch (error) {
     if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
       // Return default config
@@ -33,7 +33,7 @@ export async function loadConfig(configPath: string): Promise<RalphConfig> {
           }
         ],
         defaultAgent: 'gemini-cli',
-        stateDirectory: '.ralph'
+        stateDirectory: '.magi'
       };
     }
     throw error;

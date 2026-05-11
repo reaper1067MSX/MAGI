@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { loadConfig, RalphConfigSchema } from '../index.js';
+import { loadConfig, MagiConfigSchema } from '../index.js';
 import * as fs from 'node:fs/promises';
 
 vi.mock('node:fs/promises');
@@ -10,7 +10,7 @@ describe('Config Loader', () => {
 
     const config = await loadConfig('non-existent.json');
     expect(config.defaultAgent).toBe('gemini-cli');
-    expect(config.stateDirectory).toBe('.ralph');
+    expect(config.stateDirectory).toBe('.magi');
   });
 
   it('should validate valid config', () => {
@@ -18,7 +18,7 @@ describe('Config Loader', () => {
       agents: [{ name: 'custom', type: 'openai' }],
       defaultAgent: 'custom'
     };
-    const result = RalphConfigSchema.safeParse(validConfig);
+    const result = MagiConfigSchema.safeParse(validConfig);
     expect(result.success).toBe(true);
   });
 
@@ -27,7 +27,8 @@ describe('Config Loader', () => {
       agents: [{ name: 'bad', type: 'unknown' }],
       defaultAgent: 'bad'
     };
-    const result = RalphConfigSchema.safeParse(invalidConfig);
+    const result = MagiConfigSchema.safeParse(invalidConfig);
     expect(result.success).toBe(false);
   });
 });
+

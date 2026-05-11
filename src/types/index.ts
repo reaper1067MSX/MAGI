@@ -23,7 +23,7 @@ export interface AgentConfig {
   apiKey?: string;
 }
 
-export interface RalphConfig {
+export interface MagiConfig {
   agents: AgentConfig[];
   defaultAgent: string;
   stateDirectory?: string;

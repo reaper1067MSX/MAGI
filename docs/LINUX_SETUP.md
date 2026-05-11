@@ -1,6 +1,6 @@
-# Ralph for Linux - Setup Guide
+﻿# MAGI for Linux - Setup Guide
 
-Complete guide for running Ralph on Linux systems including Ubuntu, Debian, and Raspberry Pi OS.
+Complete guide for running MAGI on Linux systems including Ubuntu, Debian, and Raspberry Pi OS.
 
 ## Supported Systems
 
@@ -16,11 +16,11 @@ Complete guide for running Ralph on Linux systems including Ubuntu, Debian, and 
 
 ```bash
 # One-line install
-curl -fsSL https://raw.githubusercontent.com/craigm26/Ralph/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/craigm26/MAGI/main/install.sh | bash
 
 # Or clone and run
-git clone https://github.com/craigm26/Ralph.git
-cd Ralph
+git clone https://github.com/craigm26/MAGI.git
+cd MAGI
 ./install.sh
 ```
 
@@ -84,25 +84,25 @@ export OPENAI_API_KEY="sk-..."
 echo 'export OPENAI_API_KEY="sk-..."' >> ~/.bashrc
 ```
 
-### 3. Download Ralph
+### 3. Download MAGI
 
 ```bash
-git clone https://github.com/craigm26/Ralph.git
-cd Ralph
-chmod +x ralph.sh install.sh
+git clone https://github.com/craigm26/MAGI.git
+cd MAGI
+chmod +x magi.sh install.sh
 ```
 
-### 4. Run Ralph
+### 4. Run MAGI
 
 ```bash
 # With Gemini (default)
-./ralph.sh
+magi-ai run "my-task"
 
 # With Ollama
-./ralph.sh ollama
+magi-ai run "my-task" --agent ollama
 
 # With OpenAI
-./ralph.sh openai
+magi-ai run "my-task" --agent openai
 ```
 
 ## Raspberry Pi Setup
@@ -127,8 +127,8 @@ ollama pull phi:latest          # 2.7GB, good for Pi
 ollama pull codellama:7b        # 4GB, needs 8GB Pi
 ollama pull tinyllama:latest    # 600MB, very fast
 
-# Run Ralph with small model
-./ralph.sh ollama --model phi:latest
+# Run MAGI with small model
+magi-ai run "my-task" --agent ollama --model phi:latest
 ```
 
 ### Performance Tips for Pi
@@ -148,19 +148,19 @@ ollama pull tinyllama:latest    # 600MB, very fast
 
 ```bash
 # Create service file
-sudo nano /etc/systemd/system/ralph.service
+sudo nano /etc/systemd/system/MAGI.service
 ```
 
 ```ini
 [Unit]
-Description=Ralph Autonomous Agent
+Description=MAGI Autonomous Agent
 After=network.target
 
 [Service]
 Type=simple
 User=pi
 WorkingDirectory=/home/pi/myproject
-ExecStart=/home/pi/Ralph/ralph.sh --force
+ExecStart=/usr/local/bin/magi-ai run "my-task"
 Restart=on-failure
 
 [Install]
@@ -168,8 +168,8 @@ WantedBy=multi-user.target
 ```
 
 ```bash
-sudo systemctl enable ralph
-sudo systemctl start ralph
+sudo systemctl enable MAGI
+sudo systemctl start MAGI
 ```
 
 ## Ubuntu Server Setup
@@ -186,13 +186,13 @@ sudo apt install -y curl jq git nodejs npm
 # Install Gemini CLI
 sudo npm install -g @google/gemini-cli
 
-# Clone Ralph
-git clone https://github.com/craigm26/Ralph.git
-cd Ralph
-chmod +x ralph.sh
+# Clone MAGI
+git clone https://github.com/craigm26/MAGI.git
+cd MAGI
+chmod +x magi.sh
 
 # Run in background
-nohup ./ralph.sh --force > ralph.log 2>&1 &
+nohup magi-ai run "my-task" > magi.log 2>&1 &
 ```
 
 ### Using Screen or tmux
@@ -201,12 +201,12 @@ nohup ./ralph.sh --force > ralph.log 2>&1 &
 # Install screen
 sudo apt install -y screen
 
-# Start Ralph in screen
-screen -S ralph
-./ralph.sh
+# Start MAGI in screen
+screen -S MAGI
+magi-ai run "my-task"
 
 # Detach: Ctrl+A, D
-# Reattach: screen -r ralph
+# Reattach: screen -r MAGI
 ```
 
 ## Docker Setup
@@ -219,17 +219,17 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 RUN npm install -g @google/gemini-cli
+RUN npm install -g magi-orchestrator
 
 WORKDIR /app
 COPY . .
-RUN chmod +x ralph.sh
 
-CMD ["./ralph.sh", "--force"]
+CMD ["magi-ai", "run", "my-task"]
 ```
 
 ```bash
-docker build -t ralph .
-docker run -it -v $(pwd):/project ralph
+docker build -t MAGI .
+docker run -it -v $(pwd):/project MAGI
 ```
 
 ## Environment Variables
@@ -239,8 +239,8 @@ docker run -it -v $(pwd):/project ralph
 | `OPENAI_API_KEY` | OpenAI API key | openai agent |
 | `ANTHROPIC_API_KEY` | Anthropic API key | anthropic agent |
 | `GEMINI_API_KEY` | Gemini API key | gemini (optional) |
-| `RALPH_AGENT` | Default agent | All |
-| `RALPH_MODEL` | Default model | All |
+| `MAGI_AGENT` | Default agent | All |
+| `MAGI_MODEL` | Default model | All |
 
 ### Setting Environment Variables
 
@@ -281,20 +281,20 @@ ollama serve
 sudo systemctl start ollama
 ```
 
-### "Permission denied" on ralph.sh
+### "Permission denied" on magi.sh
 
 ```bash
-chmod +x ralph.sh
+chmod +x magi.sh
 ```
 
 ### Out of memory on Raspberry Pi
 
 ```bash
 # Use smaller models
-./ralph.sh ollama --model phi:latest
+magi-ai run "my-task" --agent ollama --model phi:latest
 
 # Or use API agents
-./ralph.sh gemini
+magi-ai run "my-task" --agent gemini
 ```
 
 ### Node.js version too old
@@ -307,7 +307,7 @@ sudo apt install -y nodejs
 
 ## Network Setup (Multi-Machine)
 
-Run Ollama on a powerful machine, use Ralph from another:
+Run Ollama on a powerful machine, use MAGI from another:
 
 **Server (GPU machine):**
 ```bash
@@ -321,19 +321,20 @@ sudo systemctl edit ollama
 
 **Client (Raspberry Pi or laptop):**
 ```bash
-./ralph.sh network --endpoint http://192.168.1.100:11434/api/chat --model codellama:34b
+magi-ai run "my-task" --agent network --endpoint http://192.168.1.100:11434/api/chat --model codellama:34b
 ```
 
 ## Best Practices
 
-1. **Use Git** - Ralph commits progress, so initialize git in your project
-2. **Write clear tasks** - Specific success criteria help Ralph succeed
+1. **Use Git** - MAGI commits progress, so initialize git in your project
+2. **Write clear tasks** - Specific success criteria help MAGI succeed
 3. **Add guardrails** - When something fails repeatedly, add a sign
-4. **Monitor logs** - Use `./ralph.sh watch` to see activity
+4. **Monitor logs** - Use `magi-ai run watch` to see activity (Note: check if watch is a command)
 5. **Start small** - Test with 2-3 iterations before long runs
 
 ## Next Steps
 
 - [Quick Start Guide](QUICKSTART.md) - 5-minute setup
 - [Local Models Guide](LOCAL_MODELS.md) - Detailed Ollama setup
-- [Configuration Reference](../templates/ralph-config.json) - Config options
+- [Configuration Reference](../templates/MAGI-config.json) - Config options
+

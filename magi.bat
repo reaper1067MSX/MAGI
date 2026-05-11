@@ -1,9 +1,9 @@
 @echo off
 REM ============================================================================
-REM Ralph for Windows - Multi-Agent Batch Wrapper
+REM MAGI for Windows - Multi-Agent Batch Wrapper
 REM ============================================================================
 REM
-REM Usage: ralph.bat [agent] [options]
+REM Usage: magi.bat [agent] [options]
 REM
 REM Agents:
 REM   gemini     - Google Gemini CLI (default, largest free context)
@@ -17,37 +17,37 @@ REM   network    - Network model (specify endpoint)
 REM   vscode     - VS Code manual mode
 REM
 REM Examples:
-REM   ralph.bat                           - Run with Gemini (default)
-REM   ralph.bat openai                    - Run with OpenAI GPT-4o
-REM   ralph.bat ollama -Model codellama   - Run with Ollama CodeLlama
-REM   ralph.bat network -Endpoint http://192.168.1.100:8080/v1/chat/completions
-REM   ralph.bat watch                     - Monitor activity logs
-REM   ralph.bat models ollama             - List available Ollama models
+REM   magi.bat                           - Run with Gemini (default)
+REM   magi.bat openai                    - Run with OpenAI GPT-4o
+REM   magi.bat ollama -Model codellama   - Run with Ollama CodeLlama
+REM   magi.bat network -Endpoint http://192.168.1.100:8080/v1/chat/completions
+REM   magi.bat watch                     - Monitor activity logs
+REM   magi.bat models ollama             - List available Ollama models
 REM
 REM ============================================================================
 
 setlocal enabledelayedexpansion
 
 set "SCRIPT_DIR=%~dp0"
-set "RALPH_SCRIPT=%SCRIPT_DIR%.ralph-scripts\ralph.ps1"
+set "MAGI_SCRIPT=%SCRIPT_DIR%.magi-scripts\magi.ps1"
 
-REM Check if script exists in .ralph-scripts
-if not exist "%RALPH_SCRIPT%" (
-    set "RALPH_SCRIPT=%SCRIPT_DIR%scripts\ralph.ps1"
+REM Check if script exists in .magi-scripts
+if not exist "%MAGI_SCRIPT%" (
+    set "MAGI_SCRIPT=%SCRIPT_DIR%scripts\magi.ps1"
 )
-if not exist "%RALPH_SCRIPT%" (
-    set "RALPH_SCRIPT=%SCRIPT_DIR%ralph.ps1"
+if not exist "%MAGI_SCRIPT%" (
+    set "MAGI_SCRIPT=%SCRIPT_DIR%magi.ps1"
 )
 
-if not exist "%RALPH_SCRIPT%" (
+if not exist "%MAGI_SCRIPT%" (
     echo.
-    echo ERROR: ralph.ps1 not found
+    echo ERROR: magi.ps1 not found
     echo Expected locations:
-    echo   - %SCRIPT_DIR%.ralph-scripts\ralph.ps1
-    echo   - %SCRIPT_DIR%scripts\ralph.ps1
-    echo   - %SCRIPT_DIR%ralph.ps1
+    echo   - %SCRIPT_DIR%.magi-scripts\magi.ps1
+    echo   - %SCRIPT_DIR%scripts\magi.ps1
+    echo   - %SCRIPT_DIR%magi.ps1
     echo.
-    echo Run install.ps1 first to set up Ralph.
+    echo Run install.ps1 first to set up MAGI.
     echo.
     exit /b 1
 )
@@ -59,21 +59,21 @@ if /i "%1"=="--help" goto :show_help
 if /i "%1"=="/?" goto :show_help
 
 if /i "%1"=="watch" (
-    powershell -NoProfile -ExecutionPolicy Bypass -File "%RALPH_SCRIPT%" -WatchOnly
+    powershell -NoProfile -ExecutionPolicy Bypass -File "%MAGI_SCRIPT%" -WatchOnly
     exit /b %ERRORLEVEL%
 )
 
 if /i "%1"=="models" (
     if "%2"=="" (
-        powershell -NoProfile -ExecutionPolicy Bypass -File "%RALPH_SCRIPT%" -ListModels
+        powershell -NoProfile -ExecutionPolicy Bypass -File "%MAGI_SCRIPT%" -ListModels
     ) else (
-        powershell -NoProfile -ExecutionPolicy Bypass -File "%RALPH_SCRIPT%" -Agent %2 -ListModels
+        powershell -NoProfile -ExecutionPolicy Bypass -File "%MAGI_SCRIPT%" -Agent %2 -ListModels
     )
     exit /b %ERRORLEVEL%
 )
 
 if /i "%1"=="init" (
-    powershell -NoProfile -ExecutionPolicy Bypass -File "%SCRIPT_DIR%.ralph-scripts\init-ralph.ps1" %2 %3 %4
+    powershell -NoProfile -ExecutionPolicy Bypass -File "%SCRIPT_DIR%.magi-scripts\init-magi.ps1" %2 %3 %4
     exit /b %ERRORLEVEL%
 )
 
@@ -107,19 +107,19 @@ goto :collect_args
 
 :run
 echo.
-echo Starting Ralph for Windows...
+echo Starting MAGI for Windows...
 echo.
 
-powershell -NoProfile -ExecutionPolicy Bypass -File "%RALPH_SCRIPT%" %AGENT_ARG% %EXTRA_ARGS%
+powershell -NoProfile -ExecutionPolicy Bypass -File "%MAGI_SCRIPT%" %AGENT_ARG% %EXTRA_ARGS%
 exit /b %ERRORLEVEL%
 
 :show_help
 echo.
 echo ============================================================================
-echo   RALPH FOR WINDOWS - Multi-Agent Autonomous Development
+echo   MAGI FOR WINDOWS - Multi-Agent Autonomous Development
 echo ============================================================================
 echo.
-echo Usage: ralph.bat [agent] [options]
+echo Usage: magi.bat [agent] [options]
 echo.
 echo AGENTS (Cloud):
 echo   gemini       Google Gemini CLI (default) - 1M+ token context, free tier
@@ -151,25 +151,25 @@ echo.
 echo COMMANDS:
 echo   watch                Monitor activity logs in real-time
 echo   models [agent]       List available models
-echo   init                 Reset Ralph state
+echo   init                 Reset MAGI state
 echo   help                 Show this help
 echo.
 echo EXAMPLES:
-echo   ralph.bat                                    Run with Gemini (default)
-echo   ralph.bat openai                             Run with OpenAI GPT-4o
-echo   ralph.bat openai -Model gpt-4-turbo         Run with specific model
-echo   ralph.bat ollama -Model deepseek-coder:33b  Run with local DeepSeek
-echo   ralph.bat lmstudio                           Run with LM Studio
-echo   ralph.bat network -Endpoint http://myserver:8080/v1/chat/completions
-echo   ralph.bat watch                              Monitor logs
-echo   ralph.bat models ollama                      List Ollama models
+echo   magi.bat                                    Run with Gemini (default)
+echo   magi.bat openai                             Run with OpenAI GPT-4o
+echo   magi.bat openai -Model gpt-4-turbo         Run with specific model
+echo   magi.bat ollama -Model deepseek-coder:33b  Run with local DeepSeek
+echo   magi.bat lmstudio                           Run with LM Studio
+echo   magi.bat network -Endpoint http://myserver:8080/v1/chat/completions
+echo   magi.bat watch                              Monitor logs
+echo   magi.bat models ollama                      List Ollama models
 echo.
 echo ENVIRONMENT VARIABLES:
 echo   OPENAI_API_KEY       Required for openai/codex agents
 echo   ANTHROPIC_API_KEY    Required for anthropic agent
 echo   AZURE_OPENAI_API_KEY Required for azure agent
-echo   RALPH_AGENT          Default agent (overrides config)
-echo   RALPH_MODEL          Default model
+echo   MAGI_AGENT          Default agent (overrides config)
+echo   MAGI_MODEL          Default model
 echo.
 echo DOCUMENTATION:
 echo   README.md            Full documentation

@@ -1,6 +1,6 @@
 ---
 name: Bug Report
-about: Report a bug to help us improve Ralph
+about: Report a bug to help us improve MAGI
 title: '[BUG] '
 labels: bug
 assignees: ''
@@ -34,7 +34,7 @@ What actually happened.
 ## Logs
 
 <details>
-<summary>Error Log (.ralph/errors.log)</summary>
+<summary>Error Log (.magi/errors.log)</summary>
 
 ```
 Paste error log contents here
@@ -43,7 +43,7 @@ Paste error log contents here
 </details>
 
 <details>
-<summary>Activity Log (.ralph/activity.log)</summary>
+<summary>Activity Log (.magi/activity.log)</summary>
 
 ```
 Paste relevant activity log here
@@ -54,7 +54,7 @@ Paste relevant activity log here
 ## Configuration
 
 <details>
-<summary>ralph-config.json (remove sensitive data)</summary>
+<summary>magi-config.json (remove sensitive data)</summary>
 
 ```json
 Paste config here

@@ -1,6 +1,6 @@
-{
+﻿{
     "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "$comment": "Ralph for Windows - Multi-Agent Configuration",
+    "$comment": "MAGI for Windows - Multi-Agent Configuration",
     
     "maxIterations": 20,
     "warnThresholdPercent": 70,
@@ -12,7 +12,7 @@
         "gemini": {
             "type": "cli",
             "command": "gemini",
-            "defaultModel": "gemini-2.5-pro",
+            "defaultModel": "gemini-2.0-flash",
             "contextLimit": 1000000,
             "description": "Google Gemini CLI - largest free context window"
         },
@@ -106,23 +106,23 @@
         "claude": "claude-sonnet-4-20250514",
         "sonnet": "claude-sonnet-4-20250514",
         "opus": "claude-opus-4-20250514",
-        "gemini": "gemini-2.5-pro",
-        "gemini-pro": "gemini-2.5-pro",
-        "gemini-flash": "gemini-2.5-flash",
+        "gemini": "gemini-2.0-flash",
+        "gemini-pro": "gemini-2.0-flash",
+        "gemini-flash": "gemini-2.0-flash",
         "codellama": "codellama:13b",
         "deepseek": "deepseek-coder:33b",
         "llama": "llama3:8b"
     },
     
     "paths": {
-        "taskFile": "RALPH_TASK.md",
-        "ralphDir": ".ralph",
-        "scriptsDir": ".ralph-scripts"
+        "taskFile": "MAGI_TASK.md",
+        "MAGIDir": ".magi",
+        "scriptsDir": ".magi-scripts"
     },
     
     "git": {
         "autoCommit": true,
-        "commitPrefix": "ralph:",
+        "commitPrefix": "MAGI:",
         "autoPush": false
     },
     
@@ -148,3 +148,5 @@
         "retryDelaySeconds": 5
     }
 }
+
+

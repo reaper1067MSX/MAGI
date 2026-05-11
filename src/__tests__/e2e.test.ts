@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { spawn, ChildProcess } from 'node:child_process';
 import * as path from 'node:path';
 
-describe('Ralph MCP E2E', () => {
+describe('MAGI MCP E2E', () => {
   let serverProcess: ChildProcess;
 
   it('should respond to list tools request over stdio', async () => {
@@ -24,7 +24,7 @@ describe('Ralph MCP E2E', () => {
         const response = JSON.parse(data.toString());
         expect(response.id).toBe(1);
         expect(response.result.tools).toBeDefined();
-        expect(response.result.tools.some((t: any) => t.name === 'run_ralph_iteration')).toBe(true);
+        expect(response.result.tools.some((t: any) => t.name === 'run_magi_iteration')).toBe(true);
         
         serverProcess.kill();
         resolve();

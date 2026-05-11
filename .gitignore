@@ -1,6 +1,6 @@
-# Ralph state files (optional - may want to track these)
-.ralph/
-!.ralph/.gitkeep
+# MAGI state files (optional - may want to track these)
+.magi/
+!.magi/.gitkeep
 
 # Editor directories and files
 .idea/

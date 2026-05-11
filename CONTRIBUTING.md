@@ -1,6 +1,6 @@
-# Contributing to Ralph
+﻿# Contributing to MAGI
 
-Thank you for your interest in contributing to Ralph! This document provides guidelines and information for contributors.
+Thank you for your interest in contributing to MAGI! This document provides guidelines and information for contributors.
 
 ## Code of Conduct
 
@@ -16,8 +16,8 @@ Before creating a bug report, please check existing issues to avoid duplicates. 
 2. **Steps to reproduce**: Clear, numbered steps
 3. **Expected behavior**: What you expected to happen
 4. **Actual behavior**: What actually happened
-5. **Logs**: Contents of `.ralph/errors.log` and `.ralph/activity.log`
-6. **Configuration**: Your `ralph-config.json` (with sensitive data removed)
+5. **Logs**: Contents of `.MAGI/errors.log` and `.MAGI/activity.log`
+6. **Configuration**: Your `MAGI-config.json` (with sensitive data removed)
 
 ### Suggesting Features
 
@@ -40,14 +40,14 @@ Feature suggestions are welcome! Please include:
 
 ```powershell
 # Clone your fork
-git clone https://github.com/YOUR_USERNAME/Ralph.git
-cd Ralph
+git clone https://github.com/YOUR_USERNAME/MAGI.git
+cd MAGI
 
 # Create a branch
 git checkout -b feature/your-feature-name
 
 # Make changes and test
-.\ralph.bat <agent> -MaxIterations 3
+.\MAGI.bat <agent> -MaxIterations 3
 ```
 
 ## Coding Style
@@ -90,17 +90,17 @@ Before submitting a PR, test with at least:
 
 ```powershell
 # Basic test
-.\ralph.bat gemini -MaxIterations 2 -Force
+.\MAGI.bat gemini -MaxIterations 2 -Force
 
 # Test with different agent
-.\ralph.bat ollama -Model codellama:7b -MaxIterations 2 -Force
+.\MAGI.bat ollama -Model codellama:7b -MaxIterations 2 -Force
 ```
 
 ## Adding a New Agent
 
 To add support for a new AI agent:
 
-1. **Add configuration** in `ralph.ps1`:
+1. **Add configuration** in `MAGI.ps1`:
 ```powershell
 $script:DefaultConfig.agents["newagent"] = @{
     type = "api"  # or "cli"
@@ -122,21 +122,21 @@ $script:DefaultConfig.agents["newagent"] = @{
 ## Project Structure
 
 ```
-Ralph/
-├── ralph.ps1           # Main script
-├── ralph.bat           # Windows launcher
-├── docs/
-│   ├── QUICKSTART.md
-│   ├── LOCAL_MODELS.md
-│   └── VSCODE_GUIDE.md
-├── templates/
-│   ├── RALPH_TASK_example.md
-│   └── ralph-config.json
-├── README.md
-├── LICENSE
-├── CONTRIBUTING.md
-├── CODE_OF_CONDUCT.md
-└── CHANGELOG.md
+MAGI/
+â”œâ”€â”€ MAGI.ps1           # Main script
+â”œâ”€â”€ MAGI.bat           # Windows launcher
+â”œâ”€â”€ docs/
+â”‚   â”œâ”€â”€ QUICKSTART.md
+â”‚   â”œâ”€â”€ LOCAL_MODELS.md
+â”‚   â””â”€â”€ VSCODE_GUIDE.md
+â”œâ”€â”€ templates/
+â”‚   â”œâ”€â”€ MAGI_TASK_example.md
+â”‚   â””â”€â”€ MAGI-config.json
+â”œâ”€â”€ README.md
+â”œâ”€â”€ LICENSE
+â”œâ”€â”€ CONTRIBUTING.md
+â”œâ”€â”€ CODE_OF_CONDUCT.md
+â””â”€â”€ CHANGELOG.md
 ```
 
 ## Commit Messages
@@ -166,3 +166,4 @@ Feel free to:
 - Reach out to maintainers
 
 Thank you for contributing!
+

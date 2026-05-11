@@ -1,5 +1,5 @@
 import { UI } from './ui.js';
-import { RalphEngine } from '../engine/RalphEngine.js';
+import { MagiEngine } from '../engine/MagiEngine.js';
 import { loadConfig } from '../config/index.js';
 import { GeminiAgent } from '../agents/GeminiAgent.js';
 import { ClaudeAgent } from '../agents/ClaudeAgent.js';
@@ -11,8 +11,8 @@ export async function runInteractive(taskName: string) {
   ui.logSystem('MAGI Interactive Run', `Starting task: ${taskName}`);
 
   try {
-    const config = await loadConfig('ralph-config.json');
-    const engine = new RalphEngine(config);
+    const config = await loadConfig('magi-config.json');
+    const engine = new MagiEngine(config);
 
     const agents: Record<string, AgentAdapter> = {
       'gemini-cli': new GeminiAgent(),
@@ -25,7 +25,7 @@ export async function runInteractive(taskName: string) {
     const agent = agents[agentName];
 
     if (!agent) {
-      ui.logError('Setup Error', `Agent '${agentName}' not found. Please check your ralph-config.json`);
+      ui.logError('Setup Error', `Agent '${agentName}' not found. Please check your magi-config.json`);
       process.exit(1);
     }
 

@@ -1,114 +1,108 @@
 <div align="center">
-  <h1>🧙‍♂️ MAGI Orchestrator</h1>
-  <p><strong>A Task-Based AI Orchestrator & MCP Server</strong></p>
+  <h1>🧙‍♂️ MAGI Orchestrator (magi-ai)</h1>
+  <p><strong>The Task-Based AI Orchestrator & MCP Server</strong></p>
   <p>
     <a href="https://www.npmjs.com/package/magi-orchestrator"><img src="https://img.shields.io/npm/v/magi-orchestrator?color=cyan&label=npm" alt="NPM Version" /></a>
     <img src="https://img.shields.io/badge/Model_Context_Protocol-Ready-blue" alt="MCP Ready" />
     <img src="https://img.shields.io/badge/Agents-Gemini_|_Claude_|_OpenAI-purple" alt="Supported Agents" />
+    <img src="https://img.shields.io/badge/License-MIT-green" alt="License" />
   </p>
 </div>
 
-MAGI (formerly Ralph) is a sophisticated task-based orchestrator that brings structure to AI agents. It operates as both a global interactive CLI and a background **Model Context Protocol (MCP)** server, allowing you to seamlessly integrate its capabilities into your favorite AI clients (like Gemini CLI or Claude Desktop).
-
 ---
 
-## 🌟 Key Features
+**MAGI-AI** is a high-performance, task-based AI orchestrator designed to bring structure, persistence, and specialized intelligence to autonomous development. It operates as a bridge between your preferred AI models and your local environment, functioning simultaneously as a **powerful interactive CLI** and a background **Model Context Protocol (MCP) server**.
 
-*   **Hybrid Architecture:** Use it as an interactive CLI (`magi run`) with a beautiful, Claude-like terminal UI, or let your AI client control it silently via MCP (`magi serve`).
-*   **Auto-Registration:** Run `magi setup` and MAGI will automatically inject itself into your Gemini CLI or Claude Desktop configurations. No manual JSON editing required.
-*   **Real SDK Integration:** Native connections to official SDKs. MAGI reasons securely using your API keys.
-*   **Persistent State Orchestration:** MAGI manages progress, activity logs, and strict guardrails natively in a local `.ralph` directory.
+## 🌟 Why MAGI-AI? (Key Benefits)
+
+*   **Professional Interactive UI**: Inspired by Claude Code, featuring dimmed reasoning for better focus, real-time action spinners, and clean result boxes.
+*   **Hybrid Power**: Use it directly in your terminal for dedicated focus, or annex it to your favorite AI client (Gemini CLI, Claude Desktop) via MCP.
+*   **Persistent Orchestration**: Unlike standard chat interfaces, MAGI manages its own state in a local `.magi` directory, including progress logs, activity history, and strict **Guardrails** (Signs) to prevent AI loops.
+*   **Native SDK Integration**: Fast and secure connections to official Google Gemini, Anthropic Claude, and OpenAI SDKs. No middleman proxies.
+*   **Zero-Touch Automation**: Registration and skill installation happen automatically. Just install and start orquestrating.
 
 ---
 
 ## 📦 Installation
 
-Install MAGI globally via npm to access the CLI from anywhere:
+Install **MAGI Orchestrator** globally via npm to get the `magi-ai` command:
 
 ```bash
+# Official installation
 npm install -g magi-orchestrator
 ```
 
+*Note: The automatic registration script (`postinstall`) will detect your Gemini CLI and Claude Desktop configurations and inject the MAGI server/skill automatically.*
+
 ---
 
-## 🚀 Quick Start
+## 🚀 How it Operates (Quick Start)
 
-### Option 1: The "Annexed" MCP Server (Recommended)
-
-Let your favorite AI client use MAGI as a powerful background tool.
-
-1. **Auto-Register MAGI:**
-   ```bash
-   magi setup
-   ```
-   *This command detects Gemini CLI and Claude Desktop and adds MAGI to their MCP servers list.*
-
-2. **Configure your Agents:**
-   Create a `ralph-config.json` in your project folder (or define env variables). See the [Configuration](#-configuration) section.
-
-3. **Start chatting:**
-   Open your AI client and ask: *"Iterate on the backend task using MAGI"*. The client will automatically trigger the background server.
-
-### Option 2: Interactive CLI Mode
-
+### Option 1: Interactive CLI Mode (Recommended for Focus)
 Run tasks directly from your terminal with rich, stylized feedback.
 
 ```bash
 # Execute a task iteration interactively
-magi run "build-api"
+magi-ai run "build-auth-layer"
 ```
 
-*Enjoy a clean UI with clear distinctions between your input, the AI's reasoning, and system actions!*
+### Option 2: The "Annexed" Mode (Skill Injection)
+Open your **Gemini CLI** and use the native skill:
+> `/magi-ai run "fix-login-bug"`
+> *MAGI will work in the background and report progress directly to your chat session.*
 
 ---
 
 ## ⚙️ Configuration
 
-MAGI looks for a `ralph-config.json` file in your current working directory to understand which agents are available.
+MAGI looks for a `magi-config.json` file in your project directory. If not found, it uses sensible defaults.
 
 ```json
 {
   "agents": [
     {
-      "name": "gemini-pro",
+      "name": "gemini-flash",
       "type": "gemini",
-      "model": "gemini-2.5-pro"
+      "model": "gemini-2.0-flash"
     },
     {
       "name": "claude-sonnet",
       "type": "claude",
       "model": "claude-3-5-sonnet-20241022"
-    },
-    {
-      "name": "gpt-4-smart",
-      "type": "openai",
-      "model": "gpt-4o"
     }
   ],
-  "defaultAgent": "gemini-pro",
-  "stateDirectory": ".ralph"
+  "defaultAgent": "gemini-flash",
+  "stateDirectory": ".magi"
 }
 ```
 
 ### 🔑 Authentication
-
-MAGI requires API keys to communicate with the models. Set these as environment variables (or include them directly in the config, though env vars are safer):
-
-*   **Gemini:** `GEMINI_API_KEY`
-*   **Claude:** `ANTHROPIC_API_KEY`
-*   **OpenAI:** `OPENAI_API_KEY`
+Set your API keys as environment variables:
+*   `GEMINI_API_KEY`, `ANTHROPIC_API_KEY`, `OPENAI_API_KEY`.
 
 ---
 
-## 🛠 MCP Tools Provided
+## 🛠 Operation Mechanics: The .magi Directory
 
-When running as an MCP server, MAGI exposes the following tools to the host AI:
+MAGI keeps your project context clean by orchestrating everything inside the `.magi` folder:
+*   **`progress.md`**: Tracking success criteria and current status.
+*   **`guardrails.md`**: Active "Signs" learned from previous failures to guide the AI.
+*   **`activity.log`**: Detailed history of every decision and action.
 
-*   `run_ralph_iteration(taskName, agentName?)`: The core engine. Reads guardrails, builds a contextual prompt, invokes the selected agent, and persists the progress.
-*   `get_ralph_status()`: Quickly retrieves the engine's active state and directory path.
+---
+
+## 🛠 Available CLI Commands
+
+| Command | Description |
+|---------|-------------|
+| `magi-ai run <task>` | Start/Continue a task iteration interactively. |
+| `magi-ai setup` | Manually trigger auto-registration in AI clients. |
+| `magi-ai serve` | Start the MCP server (STDIO). |
+| `magi-ai --version` | Report the current version (v1.2.0). |
 
 ---
 
 <div align="center">
   <p>Built with 🩵 by <a href="https://github.com/reaper1067MSX">Santiago Arguello</a></p>
+  <p><em>"Bringing divine structure to chaotic agents."</em></p>
 </div>

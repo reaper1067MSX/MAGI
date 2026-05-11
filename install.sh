@@ -1,12 +1,12 @@
 #!/bin/bash
 # =============================================================================
-# Ralph - Cross-Platform Installation Script
+# MAGI - Cross-Platform Installation Script
 # =============================================================================
 #
 # Supports: macOS, Ubuntu, Debian, Raspberry Pi OS, Fedora, Arch, and more
 #
 # Usage:
-#   curl -fsSL https://raw.githubusercontent.com/craigm26/Ralph/main/install.sh | bash
+#   curl -fsSL https://raw.githubusercontent.com/reaper1067MSX/MAGI/main/install.sh | bash
 #
 # Or:
 #   ./install.sh [options]
@@ -31,7 +31,7 @@ NC='\033[0m'
 log_info() { echo -e "${CYAN}$1${NC}"; }
 log_success() { echo -e "${GREEN}✓ $1${NC}"; }
 log_warning() { echo -e "${YELLOW}⚠ $1${NC}"; }
-log_error() { echo -e "${RED}✗ $1${NC}"; }
+log_error() { echo -e "${RED}✘ $1${NC}"; }
 
 # Detect OS
 detect_os() {
@@ -267,27 +267,27 @@ install_claude() {
     fi
 }
 
-# Setup Ralph
-setup_ralph() {
+# Setup MAGI
+setup_magi() {
     local install_dir="${1:-$PWD}"
 
-    log_info "Setting up Ralph in $install_dir..."
+    log_info "Setting up MAGI in $install_dir..."
 
     # Create directory structure
-    mkdir -p "$install_dir/.ralph-scripts"
+    mkdir -p "$install_dir/.magi-scripts"
     mkdir -p "$install_dir/templates"
 
-    # Copy or download ralph.sh
-    if [[ -f "ralph.sh" ]]; then
-        cp ralph.sh "$install_dir/"
+    # Copy or download magi.sh
+    if [[ -f "magi.sh" ]]; then
+        cp magi.sh "$install_dir/"
     else
-        curl -fsSL https://raw.githubusercontent.com/craigm26/Ralph/main/ralph.sh -o "$install_dir/ralph.sh"
+        curl -fsSL https://raw.githubusercontent.com/reaper1067MSX/MAGI/main/magi.sh -o "$install_dir/magi.sh"
     fi
 
-    chmod +x "$install_dir/ralph.sh"
+    chmod +x "$install_dir/magi.sh"
 
     # Create default config
-    cat > "$install_dir/.ralph-scripts/ralph-config.json" << 'EOF'
+    cat > "$install_dir/.magi-scripts/magi-config.json" << 'EOF'
 {
     "defaultAgent": "gemini",
     "maxIterations": 20,
@@ -299,13 +299,13 @@ setup_ralph() {
     },
     "git": {
         "autoCommit": true,
-        "commitPrefix": "ralph:"
+        "commitPrefix": "magi:"
     }
 }
 EOF
 
     # Create example task
-    cat > "$install_dir/templates/RALPH_TASK_example.md" << 'EOF'
+    cat > "$install_dir/templates/MAGI_TASK_example.md" << 'EOF'
 ---
 task: Build REST API
 test_command: npm test
@@ -329,12 +329,13 @@ Build a simple REST API with the following endpoints.
 - Write unit tests for each endpoint
 EOF
 
-    log_success "Ralph setup complete!"
+    log_success "MAGI setup complete!"
     echo ""
     log_info "Next steps:"
     echo "  1. cd $install_dir"
-    echo "  2. Create RALPH_TASK.md with your task"
-    echo "  3. Run: ./ralph.sh"
+    echo "  2. Create MAGI_TASK.md with your task"
+    echo "  3. Run: magi-ai run \"test\""
+    echo "     (Or legacy: ./magi.sh)"
     echo ""
 }
 
@@ -342,7 +343,7 @@ EOF
 show_help() {
     cat << 'EOF'
 
-Ralph for Linux - Installation Script
+MAGI for Linux - Installation Script
 
 USAGE:
   ./install.sh [options]
@@ -354,7 +355,7 @@ OPTIONS:
                       claude   - Claude Code CLI
   --all             Install all available agents
   --deps-only       Only install system dependencies
-  --setup           Setup Ralph in current directory
+  --setup            Setup MAGI in current directory
   --help            Show this help
 
 EXAMPLES:
@@ -362,10 +363,10 @@ EXAMPLES:
   ./install.sh --agent gemini     # Install Gemini CLI only
   ./install.sh --agent ollama     # Install Ollama only
   ./install.sh --all              # Install all agents
-  ./install.sh --setup            # Setup Ralph files only
+  ./install.sh --setup            # Setup MAGI files only
 
 REMOTE INSTALLATION:
-  curl -fsSL https://raw.githubusercontent.com/craigm26/Ralph/main/install.sh | bash
+  curl -fsSL https://raw.githubusercontent.com/reaper1067MSX/MAGI/main/install.sh | bash
 
 SUPPORTED SYSTEMS:
   - Ubuntu 20.04+
@@ -381,7 +382,7 @@ EOF
 interactive_menu() {
     echo ""
     echo -e "${CYAN}============================================${NC}"
-    echo -e "  Ralph for Linux - Installer"
+    echo -e "  MAGI for Linux - Installer"
     echo -e "${CYAN}============================================${NC}"
     echo ""
     echo "  System: $OS_NAME"
@@ -392,7 +393,7 @@ interactive_menu() {
     echo "  2) Install Ollama (local models)"
     echo "  3) Install Claude Code CLI"
     echo "  4) Install all agents"
-    echo "  5) Setup Ralph only (no agents)"
+    echo "  5) Setup MAGI only (no agents)"
     echo "  6) Exit"
     echo ""
     read -p "  Choose option [1-6]: " choice
@@ -401,28 +402,28 @@ interactive_menu() {
         1)
             install_dependencies
             install_gemini
-            setup_ralph
+            setup_magi
             ;;
         2)
             install_dependencies
             install_ollama
-            setup_ralph
+            setup_magi
             ;;
         3)
             install_dependencies
             install_claude
-            setup_ralph
+            setup_magi
             ;;
         4)
             install_dependencies
             install_gemini
             install_ollama
             install_claude
-            setup_ralph
+            setup_magi
             ;;
         5)
             install_dependencies
-            setup_ralph
+            setup_magi
             ;;
         6)
             echo "Goodbye!"
@@ -485,7 +486,7 @@ if [[ "$DEPS_ONLY" == "true" ]]; then
 fi
 
 if [[ "$SETUP_ONLY" == "true" ]]; then
-    setup_ralph
+    setup_magi
     exit 0
 fi
 
@@ -500,7 +501,7 @@ if [[ -n "$AGENT" ]]; then
             exit 1
             ;;
     esac
-    setup_ralph
+    setup_magi
     exit 0
 fi
 
@@ -509,7 +510,7 @@ if [[ "$ALL_AGENTS" == "true" ]]; then
     install_gemini
     install_ollama
     install_claude
-    setup_ralph
+    setup_magi
     exit 0
 fi
 

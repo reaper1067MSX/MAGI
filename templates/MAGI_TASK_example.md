@@ -1,4 +1,4 @@
----
+﻿---
 task: Build a REST API
 test_command: npm test
 ---
@@ -71,3 +71,4 @@ Response (404):
 - Validate email format
 - Return appropriate HTTP status codes
 - Include timestamps in ISO 8601 format
+

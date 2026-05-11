@@ -4,7 +4,7 @@ import {
   CallToolRequestSchema,
   ListToolsRequestSchema,
 } from '@modelcontextprotocol/sdk/types.js';
-import { RalphEngine } from '../engine/RalphEngine.js';
+import { MagiEngine } from '../engine/MagiEngine.js';
 import { loadConfig } from '../config/index.js';
 import { GeminiAgent } from '../agents/GeminiAgent.js';
 import { ClaudeAgent } from '../agents/ClaudeAgent.js';
@@ -13,8 +13,8 @@ import type { AgentAdapter } from '../types/index.js';
 import chalk from 'chalk';
 
 export async function startMcpServer() {
-  const config = await loadConfig('ralph-config.json');
-  const engine = new RalphEngine(config);
+  const config = await loadConfig('magi-config.json');
+  const engine = new MagiEngine(config);
   
   const server = new Server(
     {
@@ -38,7 +38,7 @@ export async function startMcpServer() {
   server.setRequestHandler(ListToolsRequestSchema, async () => ({
     tools: [
       {
-        name: 'run_ralph_iteration',
+        name: 'run_magi_iteration',
         description: 'Run a single MAGI iteration for a task',
         inputSchema: {
           type: 'object',
@@ -50,7 +50,7 @@ export async function startMcpServer() {
         },
       },
       {
-        name: 'get_ralph_status',
+        name: 'get_magi_status',
         description: 'Get current status of MAGI engine',
         inputSchema: { type: 'object', properties: {} },
       },
@@ -59,7 +59,7 @@ export async function startMcpServer() {
 
   server.setRequestHandler(CallToolRequestSchema, async (request) => {
     switch (request.params.name) {
-      case 'run_ralph_iteration': {
+      case 'run_magi_iteration': {
         const taskName = request.params.arguments?.taskName as string;
         const agentName = (request.params.arguments?.agentName as string) || config.defaultAgent;
         const agent = agents[agentName] || agents[config.defaultAgent];
@@ -74,7 +74,7 @@ export async function startMcpServer() {
           ],
         };
       }
-      case 'get_ralph_status': {
+      case 'get_magi_status': {
         return {
           content: [
             {

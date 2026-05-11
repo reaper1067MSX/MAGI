@@ -5,6 +5,27 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.3] - 2026-05-11
+
+### Added
+- **Full Rebranding to MAGI** - Ralph is now MAGI Orchestrator.
+- **Hybrid Architecture** - Operates as both a global CLI and a Model Context Protocol (MCP) server.
+- **Real AI SDKs** - Native integration with `@google/generative-ai`, `@anthropic-ai/sdk`, and `openai`.
+- **Interactive UI** - Claude Code-style terminal experience with rich logging, reasoning dimming, and action spinners.
+- **Zero-Touch Installation** - Automated MCP registration and skill installation via `postinstall` script.
+- **New Command Set** - `magi-ai setup` (auto-config), `magi-ai run` (interactive tasking), `magi-ai serve` (MCP entry).
+- **Cross-Platform Parity** - Rebranded and normalized `.sh`, `.ps1`, and `.bat` scripts with lowercase `.magi` state directory.
+
+### Changed
+- Core engine renamed from `RalphEngine` to `MagiEngine`.
+- Default state directory moved from `.ralph/` to `.magi/`.
+- Configuration file renamed to `magi-config.json`.
+- Default Gemini model updated to `gemini-2.0-flash`.
+
+### Removed
+- Legacy hardcoded string placeholders in agent adapters.
+- Older "Ralph" command references in documentation and templates.
+
 ## [1.2.0] - 2026-01-12
 
 ### Added

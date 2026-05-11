@@ -1,4 +1,4 @@
-# Security Policy
+﻿# Security Policy
 
 ## Supported Versions
 
@@ -8,7 +8,7 @@
 
 ## Reporting a Vulnerability
 
-If you discover a security vulnerability in Ralph, please report it responsibly:
+If you discover a security vulnerability in MAGI, please report it responsibly:
 
 1. **Do not** open a public GitHub issue for security vulnerabilities
 2. Email the maintainer directly or use GitHub's private vulnerability reporting
@@ -19,7 +19,7 @@ If you discover a security vulnerability in Ralph, please report it responsibly:
 
 ### API Keys
 
-Ralph handles API keys for various AI providers. Please follow these best practices:
+MAGI handles API keys for various AI providers. Please follow these best practices:
 
 - **Never commit API keys** to version control
 - Use environment variables to store keys: `$env:OPENAI_API_KEY = "sk-..."`
@@ -34,7 +34,7 @@ Ralph handles API keys for various AI providers. Please follow these best practi
 
 ### File System Access
 
-Ralph and AI agents can read and write files in your project directory. Be aware that:
+MAGI and AI agents can read and write files in your project directory. Be aware that:
 
 - Agents may read any file in the project to understand context
 - Agents may create or modify files as part of their work
@@ -53,5 +53,6 @@ When using network agents, ensure:
 1. **Review agent output** before committing to production
 2. **Use git** to track all changes and enable rollback
 3. **Set `maxIterations`** to prevent runaway loops
-4. **Monitor activity logs** in `.ralph/activity.log`
+4. **Monitor activity logs** in `.MAGI/activity.log`
 5. **Add guardrails** for sensitive operations
+

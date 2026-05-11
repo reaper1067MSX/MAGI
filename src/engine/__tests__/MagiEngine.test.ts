@@ -1,15 +1,15 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { RalphEngine } from '../RalphEngine.js';
+import { MagiEngine } from '../MagiEngine.js';
 import * as fs from 'node:fs/promises';
 import * as path from 'node:path';
 
 vi.mock('node:fs/promises');
 
-describe('RalphEngine', () => {
+describe('MagiEngine', () => {
   const mockConfig = {
     agents: [{ name: 'test-agent', type: 'gemini' as const }],
     defaultAgent: 'test-agent',
-    stateDirectory: '.ralph-test'
+    stateDirectory: '.magi-test'
   };
 
   beforeEach(() => {
@@ -17,7 +17,7 @@ describe('RalphEngine', () => {
   });
 
   it('should build prompt correctly from guardrails and progress', async () => {
-    const engine = new RalphEngine(mockConfig);
+    const engine = new MagiEngine(mockConfig);
     const mockAgent = {
       name: 'test-agent',
       invoke: vi.fn().mockResolvedValue({ success: true, message: 'Done' })
@@ -44,7 +44,7 @@ describe('RalphEngine', () => {
   });
 
   it('should update progress on successful iteration', async () => {
-    const engine = new RalphEngine(mockConfig);
+    const engine = new MagiEngine(mockConfig);
     const mockAgent = {
       name: 'test-agent',
       invoke: vi.fn().mockResolvedValue({ 

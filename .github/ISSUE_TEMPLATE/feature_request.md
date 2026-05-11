@@ -1,6 +1,6 @@
 ---
 name: Feature Request
-about: Suggest an idea for Ralph
+about: Suggest an idea for MAGI
 title: '[FEATURE] '
 labels: enhancement
 assignees: ''

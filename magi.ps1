@@ -1,10 +1,10 @@
 #Requires -Version 5.1
 <#
 .SYNOPSIS
-    Ralph for Windows - Autonomous AI development with deliberate context management
+    MAGI for Windows - Autonomous AI development with deliberate context management
 
 .DESCRIPTION
-    Implements Geoffrey Huntley's Ralph Wiggum technique for multiple AI agents:
+    Implements Geoffrey Huntley's MAGI Wiggum technique for multiple AI agents:
     - Gemini CLI (Google)
     - Cursor CLI
     - OpenAI API (GPT-4, Codex)
@@ -25,10 +25,10 @@
     Maximum number of iterations before stopping
 
 .PARAMETER TaskFile
-    Path to the task definition file (default: RALPH_TASK.md)
+    Path to the task definition file (default: MAGI_TASK.md)
 
 .PARAMETER ConfigFile
-    Path to configuration file (default: .ralph-scripts/ralph-config.json)
+    Path to configuration file (default: .magi-scripts/magi-config.json)
 
 .PARAMETER WatchOnly
     Monitor logs without running the loop
@@ -40,10 +40,10 @@
     Enable verbose output
 
 .EXAMPLE
-    .\ralph.ps1
-    .\ralph.ps1 -Agent openai -Model "gpt-4o"
-    .\ralph.ps1 -Agent ollama -Model "codellama:34b"
-    .\ralph.ps1 -Agent local -Endpoint "http://192.168.1.100:8080" -Model "deepseek-coder"
+    .\magi.ps1
+    .\magi.ps1 -Agent openai -Model "gpt-4o"
+    .\magi.ps1 -Agent ollama -Model "codellama:34b"
+    .\magi.ps1 -Agent local -Endpoint "http://192.168.1.100:8080" -Model "deepseek-coder"
 #>
 
 [CmdletBinding()]
@@ -57,9 +57,9 @@ param(
     
     [int]$MaxIterations = 0,
     
-    [string]$TaskFile = "RALPH_TASK.md",
+    [string]$TaskFile = "MAGI_TASK.md",
     
-    [string]$ConfigFile = ".ralph-scripts\ralph-config.json",
+    [string]$ConfigFile = ".magi-scripts\magi-config.json",
     
     [switch]$WatchOnly,
     
@@ -82,7 +82,7 @@ $script:DefaultConfig = @{
         gemini = @{
             type = "cli"
             command = "gemini"
-            defaultModel = "gemini-2.5-pro"
+            defaultModel = "gemini-2.0-flash"
             contextLimit = 1000000
             args = @("-p", "--yolo")
         }
@@ -103,7 +103,7 @@ $script:DefaultConfig = @{
         codex = @{
             type = "api"
             endpoint = "https://api.openai.com/v1/chat/completions"
-            defaultModel = "gpt-4o"  # Codex was deprecated, using GPT-4
+            defaultModel = "gpt-4o"
             contextLimit = 128000
             apiKeyEnvVar = "OPENAI_API_KEY"
         }
@@ -130,7 +130,7 @@ $script:DefaultConfig = @{
         }
         network = @{
             type = "api"
-            endpoint = ""  # Must be specified
+            endpoint = ""
             defaultModel = "default"
             contextLimit = 32000
             apiFormat = "openai"
@@ -143,14 +143,14 @@ $script:DefaultConfig = @{
     }
     
     paths = @{
-        taskFile = "RALPH_TASK.md"
-        ralphDir = ".ralph"
-        scriptsDir = ".ralph-scripts"
+        taskFile = "MAGI_TASK.md"
+        magiDir = ".magi"
+        scriptsDir = ".magi-scripts"
     }
     
     git = @{
         autoCommit = $true
-        commitPrefix = "ralph:"
+        commitPrefix = "magi:"
         autoPush = $false
     }
 }
@@ -160,15 +160,12 @@ $script:Config = $null
 function Load-Configuration {
     param([string]$ConfigPath)
     
-    # Start with defaults
     $script:Config = $script:DefaultConfig.Clone()
     
-    # Load from file if exists
     if (Test-Path $ConfigPath) {
         try {
             $fileConfig = Get-Content $ConfigPath -Raw | ConvertFrom-Json -AsHashtable
             
-            # Merge configurations
             foreach ($key in $fileConfig.Keys) {
                 if ($fileConfig[$key] -is [hashtable] -and $script:Config[$key] -is [hashtable]) {
                     foreach ($subKey in $fileConfig[$key].Keys) {
@@ -187,7 +184,6 @@ function Load-Configuration {
         }
     }
     
-    # Apply command-line overrides
     if ($Agent) { $script:Config.defaultAgent = $Agent }
     if ($MaxIterations -gt 0) { $script:Config.maxIterations = $MaxIterations }
 }
@@ -196,11 +192,11 @@ function Load-Configuration {
 # Initialization
 # ============================================================================
 
-function Initialize-Ralph {
-    $ralphDir = $script:Config.paths.ralphDir
+function Initialize-MAGI {
+    $magiDir = $script:Config.paths.magiDir
     
-    if (-not (Test-Path $ralphDir)) {
-        New-Item -ItemType Directory -Path $ralphDir -Force | Out-Null
+    if (-not (Test-Path $magiDir)) {
+        New-Item -ItemType Directory -Path $magiDir -Force | Out-Null
     }
     
     $files = @{
@@ -242,16 +238,15 @@ When something fails, add a sign:
     }
     
     foreach ($file in $files.Keys) {
-        $path = Join-Path $ralphDir $file
+        $path = Join-Path $magiDir $file
         if (-not (Test-Path $path)) {
             Set-Content -Path $path -Value $files[$file] -Encoding UTF8
         }
     }
     
-    # Check for task file
     if (-not (Test-Path $TaskFile)) {
         Write-Host "`n❌ Task file not found: $TaskFile" -ForegroundColor Red
-        Write-Host "Create a RALPH_TASK.md file with your task definition.`n" -ForegroundColor Yellow
+        Write-Host "Create a MAGI_TASK.md file with your task definition.`n" -ForegroundColor Yellow
         
         $template = @"
 ---
@@ -298,7 +293,6 @@ function Test-AgentAvailable {
         "cli" {
             $cmd = Get-Command $agentConfig.command -ErrorAction SilentlyContinue
             if (-not $cmd) {
-                # Try common paths
                 $found = $false
                 switch ($AgentName) {
                     "gemini" {
@@ -328,7 +322,6 @@ function Test-AgentAvailable {
         }
         
         "api" {
-            # Check for API key if required
             if ($agentConfig.apiKeyEnvVar) {
                 $apiKey = [Environment]::GetEnvironmentVariable($agentConfig.apiKeyEnvVar)
                 if (-not $apiKey) {
@@ -338,7 +331,6 @@ function Test-AgentAvailable {
                 }
             }
             
-            # Check endpoint for network/local agents
             if ($AgentName -eq "network" -and -not $Endpoint -and -not $agentConfig.endpoint) {
                 Write-Host "❌ Endpoint required for network agent" -ForegroundColor Red
                 Write-Host "   Use: -Endpoint 'http://your-server:port/v1/chat/completions'" -ForegroundColor Yellow
@@ -368,7 +360,6 @@ function Get-AvailableModels {
                 return $response.models | ForEach-Object { $_.name }
             }
             catch {
-                Write-Host "Failed to get Ollama models: $_" -ForegroundColor Yellow
                 return @("codellama:13b", "codellama:34b", "deepseek-coder:33b", "llama3:8b")
             }
         }
@@ -387,7 +378,7 @@ function Get-AvailableModels {
             return @("gpt-4o", "gpt-4o-mini", "gpt-4-turbo", "gpt-3.5-turbo", "o1", "o1-mini")
         }
         "gemini" {
-            return @("gemini-2.5-pro", "gemini-2.5-flash", "gemini-2.0-flash")
+            return @("gemini-2.0-flash")
         }
         default {
             return @($agentConfig.defaultModel)
@@ -404,7 +395,6 @@ function Get-TaskInfo {
     
     $content = Get-Content $TaskFilePath -Raw
     
-    # Parse frontmatter
     $taskName = ""
     $testCommand = ""
     
@@ -418,7 +408,6 @@ function Get-TaskInfo {
         }
     }
     
-    # Count checkboxes
     $unchecked = ([regex]::Matches($content, '\[ \]')).Count
     $checked = ([regex]::Matches($content, '\[x\]|\[X\]')).Count
     $total = $unchecked + $checked
@@ -444,35 +433,33 @@ function Build-AgentPrompt {
         [string]$AgentName
     )
     
-    $ralphDir = $script:Config.paths.ralphDir
+    $magiDir = $script:Config.paths.magiDir
     
-    # Read state files
     $guardrails = ""
     $progress = ""
     $errors = ""
     
-    if (Test-Path "$ralphDir\guardrails.md") {
-        $guardrails = Get-Content "$ralphDir\guardrails.md" -Raw
+    if (Test-Path "$magiDir\guardrails.md") {
+        $guardrails = Get-Content "$magiDir\guardrails.md" -Raw
     }
-    if (Test-Path "$ralphDir\progress.md") {
-        $progress = Get-Content "$ralphDir\progress.md" -Raw
+    if (Test-Path "$magiDir\progress.md") {
+        $progress = Get-Content "$magiDir\progress.md" -Raw
     }
-    if (Test-Path "$ralphDir\errors.log") {
-        $recentErrors = Get-Content "$ralphDir\errors.log" -Tail 30 -ErrorAction SilentlyContinue
+    if (Test-Path "$magiDir\errors.log") {
+        $recentErrors = Get-Content "$magiDir\errors.log" -Tail 30 -ErrorAction SilentlyContinue
         if ($recentErrors) {
             $errors = $recentErrors -join "`n"
         }
     }
     
-    # Get working directory contents
     $fileList = Get-ChildItem -Path . -Recurse -File -Depth 3 | 
-        Where-Object { $_.FullName -notmatch '(node_modules|\.git|\.ralph|__pycache__|\.venv|dist|build)' } |
+        Where-Object { $_.FullName -notmatch '(node_modules|\.git|\.magi|__pycache__|\.venv|dist|build)' } |
         Select-Object -First 50 |
         ForEach-Object { $_.FullName.Replace($PWD.Path + "\", "") }
     $fileListStr = $fileList -join "`n"
     
     $prompt = @"
-# RALPH AUTONOMOUS AGENT - ITERATION $Iteration
+# MAGI AUTONOMOUS AGENT - ITERATION $Iteration
 
 You are an autonomous coding agent working on a task. Your context is fresh each iteration.
 Progress persists in FILES and GIT, not in conversation history.
@@ -483,8 +470,8 @@ Progress persists in FILES and GIT, not in conversation history.
 2. **CHECK PROGRESS** - See what's already been done. Don't redo completed work.
 3. **WORK ON UNCHECKED CRITERIA** - Focus on [ ] items, not [x] items.
 4. **COMMIT FREQUENTLY** - Use git to save progress after each criterion.
-5. **UPDATE STATE FILES** - Write to .ralph/progress.md after completing work.
-6. **ADD GUARDRAILS** - If something fails repeatedly, add a Sign to .ralph/guardrails.md
+5. **UPDATE STATE FILES** - Write to .magi/progress.md after completing work.
+6. **ADD GUARDRAILS** - If something fails repeatedly, add a Sign to .magi/guardrails.md
 
 ## GUARDRAILS (READ FIRST!)
 
@@ -512,8 +499,8 @@ $($TaskInfo.Content)
 2. Check what criteria are already completed [x]
 3. Work on the next unchecked criterion [ ]
 4. Run tests after changes: $($TaskInfo.TestCommand)
-5. Commit with: git add -A && git commit -m "ralph: [description]"
-6. Update .ralph/progress.md with completed work
+5. Commit with: git add -A && git commit -m "magi: [description]"
+6. Update .magi/progress.md with completed work
 7. If something fails repeatedly, add a guardrail
 
 ## AVAILABLE TOOLS
@@ -526,7 +513,7 @@ You can:
 
 ## STATE FILE FORMATS
 
-When updating .ralph/progress.md:
+When updating .magi/progress.md:
 ```markdown
 ## Completed Criteria
 - [x] Criterion 1 - completed in iteration N
@@ -539,7 +526,7 @@ Working on: [current criterion]
 [Any relevant notes]
 ```
 
-When adding a guardrail to .ralph/guardrails.md:
+When adding a guardrail to .magi/guardrails.md:
 ```markdown
 ### Sign: [Short description]
 - **Trigger**: [When this applies]
@@ -569,25 +556,14 @@ function Invoke-OpenAICompatibleAPI {
         [double]$Temperature = 0.7
     )
     
-    $headers = @{
-        "Content-Type" = "application/json"
-    }
-    
-    if ($ApiKey) {
-        $headers["Authorization"] = "Bearer $ApiKey"
-    }
+    $headers = @{ "Content-Type" = "application/json" }
+    if ($ApiKey) { $headers["Authorization"] = "Bearer $ApiKey" }
     
     $body = @{
         model = $ModelName
         messages = @(
-            @{
-                role = "system"
-                content = "You are an expert coding assistant. Execute tasks precisely and update progress files."
-            },
-            @{
-                role = "user"
-                content = $Prompt
-            }
+            @{ role = "system"; content = "You are an expert coding assistant. Execute tasks precisely and update progress files." },
+            @{ role = "user"; content = $Prompt }
         )
         max_tokens = $MaxTokens
         temperature = $Temperature
@@ -595,17 +571,10 @@ function Invoke-OpenAICompatibleAPI {
     
     try {
         $response = Invoke-RestMethod -Uri $Endpoint -Method Post -Headers $headers -Body $body -TimeoutSec 300
-        return @{
-            Success = $true
-            Content = $response.choices[0].message.content
-            Usage = $response.usage
-        }
+        return @{ Success = $true; Content = $response.choices[0].message.content }
     }
     catch {
-        return @{
-            Success = $false
-            Error = $_.Exception.Message
-        }
+        return @{ Success = $false; Error = $_.Exception.Message }
     }
 }
 
@@ -619,30 +588,18 @@ function Invoke-OllamaAPI {
     $body = @{
         model = $ModelName
         messages = @(
-            @{
-                role = "system"
-                content = "You are an expert coding assistant. Execute tasks precisely."
-            },
-            @{
-                role = "user"
-                content = $Prompt
-            }
+            @{ role = "system"; content = "You are an expert coding assistant. Execute tasks precisely." },
+            @{ role = "user"; content = $Prompt }
         )
         stream = $false
     } | ConvertTo-Json -Depth 10
     
     try {
         $response = Invoke-RestMethod -Uri $Endpoint -Method Post -Body $body -ContentType "application/json" -TimeoutSec 600
-        return @{
-            Success = $true
-            Content = $response.message.content
-        }
+        return @{ Success = $true; Content = $response.message.content }
     }
     catch {
-        return @{
-            Success = $false
-            Error = $_.Exception.Message
-        }
+        return @{ Success = $false; Error = $_.Exception.Message }
     }
 }
 
@@ -658,25 +615,16 @@ function Invoke-Agent {
         [int]$Iteration
     )
     
-    $ralphDir = $script:Config.paths.ralphDir
+    $magiDir = $script:Config.paths.magiDir
     $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
     $agentConfig = $script:Config.agents[$AgentName]
     
-    # Log iteration start
-    Add-Content "$ralphDir\activity.log" "[$timestamp] === ITERATION $Iteration - $AgentName ===" -Encoding UTF8
+    Add-Content "$magiDir\activity.log" "[$timestamp] === ITERATION $Iteration - $AgentName ===" -Encoding UTF8
     
     switch ($agentConfig.type) {
-        "cli" {
-            return Invoke-CLIAgent -AgentName $AgentName -Prompt $Prompt -ModelName $ModelName -Iteration $Iteration
-        }
-        
-        "api" {
-            return Invoke-APIAgent -AgentName $AgentName -Prompt $Prompt -ModelName $ModelName -Iteration $Iteration
-        }
-        
-        "manual" {
-            return Invoke-ManualAgent -Prompt $Prompt -Iteration $Iteration
-        }
+        "cli" { return Invoke-CLIAgent -AgentName $AgentName -Prompt $Prompt -ModelName $ModelName -Iteration $Iteration }
+        "api" { return Invoke-APIAgent -AgentName $AgentName -Prompt $Prompt -ModelName $ModelName -Iteration $Iteration }
+        "manual" { return Invoke-ManualAgent -Prompt $Prompt -Iteration $Iteration }
     }
 }
 
@@ -688,7 +636,7 @@ function Invoke-CLIAgent {
         [int]$Iteration
     )
     
-    $ralphDir = $script:Config.paths.ralphDir
+    $magiDir = $script:Config.paths.magiDir
     $agentConfig = $script:Config.agents[$AgentName]
     $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
     
@@ -701,11 +649,11 @@ function Invoke-CLIAgent {
             
             try {
                 $output = & gemini @args 2>&1
-                Add-Content "$ralphDir\activity.log" "[$timestamp] Gemini completed" -Encoding UTF8
+                Add-Content "$magiDir\activity.log" "[$timestamp] Gemini completed" -Encoding UTF8
                 return @{ Success = $true; Output = $output }
             }
             catch {
-                Add-Content "$ralphDir\errors.log" "[$timestamp] Gemini error: $_" -Encoding UTF8
+                Add-Content "$magiDir\errors.log" "[$timestamp] Gemini error: $_" -Encoding UTF8
                 return @{ Success = $false; Output = $_.Exception.Message }
             }
         }
@@ -721,12 +669,12 @@ function Invoke-CLIAgent {
                 $output = Get-Content $promptFile | & cursor-agent @args 2>&1
                 Remove-Item $promptFile -Force -ErrorAction SilentlyContinue
                 
-                Add-Content "$ralphDir\activity.log" "[$timestamp] Cursor completed" -Encoding UTF8
+                Add-Content "$magiDir\activity.log" "[$timestamp] Cursor completed" -Encoding UTF8
                 return @{ Success = $true; Output = $output }
             }
             catch {
                 Remove-Item $promptFile -Force -ErrorAction SilentlyContinue
-                Add-Content "$ralphDir\errors.log" "[$timestamp] Cursor error: $_" -Encoding UTF8
+                Add-Content "$magiDir\errors.log" "[$timestamp] Cursor error: $_" -Encoding UTF8
                 return @{ Success = $false; Output = $_.Exception.Message }
             }
         }
@@ -741,11 +689,10 @@ function Invoke-APIAgent {
         [int]$Iteration
     )
     
-    $ralphDir = $script:Config.paths.ralphDir
+    $magiDir = $script:Config.paths.magiDir
     $agentConfig = $script:Config.agents[$AgentName]
     $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
     
-    # Determine endpoint
     $apiEndpoint = if ($Endpoint) { $Endpoint } else { $agentConfig.endpoint }
     $apiModel = if ($ModelName) { $ModelName } else { $agentConfig.defaultModel }
     
@@ -753,39 +700,27 @@ function Invoke-APIAgent {
     Write-Host "   Endpoint: $apiEndpoint" -ForegroundColor Gray
     Write-Host "   Model: $apiModel" -ForegroundColor Gray
     
-    # Get API key if needed
     $apiKey = ""
-    if ($agentConfig.apiKeyEnvVar) {
-        $apiKey = [Environment]::GetEnvironmentVariable($agentConfig.apiKeyEnvVar)
-    }
+    if ($agentConfig.apiKeyEnvVar) { $apiKey = [Environment]::GetEnvironmentVariable($agentConfig.apiKeyEnvVar) }
     
-    # Make API call based on format
     $result = switch ($agentConfig.apiFormat) {
-        "ollama" {
-            Invoke-OllamaAPI -Endpoint $apiEndpoint -Prompt $Prompt -ModelName $apiModel
-        }
-        default {
-            Invoke-OpenAICompatibleAPI -Endpoint $apiEndpoint -Prompt $Prompt -ModelName $apiModel -ApiKey $apiKey
-        }
+        "ollama" { Invoke-OllamaAPI -Endpoint $apiEndpoint -Prompt $Prompt -ModelName $apiModel }
+        default { Invoke-OpenAICompatibleAPI -Endpoint $apiEndpoint -Prompt $Prompt -ModelName $apiModel -ApiKey $apiKey }
     }
     
     if ($result.Success) {
-        Add-Content "$ralphDir\activity.log" "[$timestamp] $AgentName API completed" -Encoding UTF8
-        
-        # Try to execute any code blocks in the response
+        Add-Content "$magiDir\activity.log" "[$timestamp] $AgentName API completed" -Encoding UTF8
         $response = $result.Content
         Write-Host "`n📝 Agent Response:" -ForegroundColor Cyan
         Write-Host $response.Substring(0, [Math]::Min(500, $response.Length)) -ForegroundColor Gray
         if ($response.Length -gt 500) { Write-Host "..." -ForegroundColor Gray }
         
-        # Save full response
-        $responsePath = "$ralphDir\last_response.md"
+        $responsePath = "$magiDir\last_response.md"
         Set-Content -Path $responsePath -Value $response -Encoding UTF8
-        
         return @{ Success = $true; Output = $response }
     }
     else {
-        Add-Content "$ralphDir\errors.log" "[$timestamp] $AgentName API error: $($result.Error)" -Encoding UTF8
+        Add-Content "$magiDir\errors.log" "[$timestamp] $AgentName API error: $($result.Error)" -Encoding UTF8
         return @{ Success = $false; Output = $result.Error }
     }
 }
@@ -796,23 +731,18 @@ function Invoke-ManualAgent {
         [int]$Iteration
     )
     
-    $ralphDir = $script:Config.paths.ralphDir
-    
+    $magiDir = $script:Config.paths.magiDir
     Write-Host "`n📋 Manual Mode - VS Code / IDE" -ForegroundColor Yellow
     Write-Host "=" * 60
     
-    $promptPath = "$ralphDir\current_prompt.md"
+    $promptPath = "$magiDir\current_prompt.md"
     Set-Content -Path $promptPath -Value $Prompt -Encoding UTF8
     
     Write-Host "`nPrompt saved to: $promptPath" -ForegroundColor Cyan
     Write-Host "`nInstructions:" -ForegroundColor White
-    Write-Host "1. Open your IDE with AI agent (VS Code + Gemini Code Assist)"
-    Write-Host "2. Open the Agent/Chat tab"
-    Write-Host "3. Copy and paste the prompt from: $promptPath"
-    Write-Host "4. Let the agent work"
-    Write-Host "5. When done, press Enter here to continue"
-    Write-Host ""
-    
+    Write-Host "1. Open VS Code + Gemini Code Assist"
+    Write-Host "2. Copy and paste the prompt from: $promptPath"
+    Write-Host "3. Press Enter here when done"
     Read-Host "Press Enter when agent work is complete"
     
     return @{ Success = $true; Output = "Manual execution completed" }
@@ -824,42 +754,26 @@ function Invoke-ManualAgent {
 
 function Test-TaskComplete {
     param([string]$TaskFilePath)
-    
     $taskInfo = Get-TaskInfo -TaskFilePath $TaskFilePath
     return $taskInfo.RemainingCriteria -eq 0
 }
 
 function Test-GutterCondition {
-    param([string]$RalphDir)
-    
-    $errorLog = Join-Path $RalphDir "errors.log"
+    param([string]$magiDir)
+    $errorLog = Join-Path $magiDir "errors.log"
     if (-not (Test-Path $errorLog)) { return $false }
-    
     $recentErrors = Get-Content $errorLog -Tail 20 -ErrorAction SilentlyContinue
     if (-not $recentErrors) { return $false }
     
-    # Check for repeated patterns
-    $errorCounts = @{}
-    foreach ($line in $recentErrors) {
-        if ($line -match "error|failed|exception") {
-            $key = $line.Substring(0, [Math]::Min(50, $line.Length))
-            if (-not $errorCounts.ContainsKey($key)) { $errorCounts[$key] = 0 }
-            $errorCounts[$key]++
-        }
-    }
-    
-    foreach ($count in $errorCounts.Values) {
-        if ($count -ge 3) { return $true }
-    }
-    
-    return $false
+    $errorCount = ($recentErrors | Select-String -Pattern "error|failed|exception").Count
+    return $errorCount -ge 3
 }
 
 # ============================================================================
 # Main Loop
 # ============================================================================
 
-function Start-RalphLoop {
+function Start-MAGILoop {
     param(
         [string]$AgentName,
         [string]$ModelName,
@@ -867,21 +781,16 @@ function Start-RalphLoop {
         [string]$TaskFilePath
     )
     
-    $ralphDir = $script:Config.paths.ralphDir
-    
-    # Get current iteration
-    $iterationFile = Join-Path $ralphDir ".iteration"
+    $magiDir = $script:Config.paths.magiDir
+    $iterationFile = Join-Path $magiDir ".iteration"
     $iteration = 1
-    if (Test-Path $iterationFile) {
-        $iteration = [int](Get-Content $iterationFile)
-    }
+    if (Test-Path $iterationFile) { $iteration = [int](Get-Content $iterationFile) }
     
-    # Display task summary
     $taskInfo = Get-TaskInfo -TaskFilePath $TaskFilePath
     $agentConfig = $script:Config.agents[$AgentName]
     
     Write-Host "`n" + "=" * 70 -ForegroundColor Cyan
-    Write-Host "  RALPH FOR WINDOWS - Multi-Agent Edition" -ForegroundColor White
+    Write-Host "  MAGI FOR WINDOWS - Multi-Agent Edition" -ForegroundColor White
     Write-Host "=" * 70 -ForegroundColor Cyan
     Write-Host ""
     Write-Host "  Agent:       $AgentName ($($agentConfig.type))" -ForegroundColor Gray
@@ -898,132 +807,76 @@ function Start-RalphLoop {
     Write-Host "`n" + "-" * 70 -ForegroundColor DarkGray
     
     if (-not $Force) {
-        $confirm = Read-Host "`nStart Ralph loop? (y/n)"
-        if ($confirm -ne "y" -and $confirm -ne "Y") {
-            Write-Host "Aborted." -ForegroundColor Yellow
-            return
-        }
+        $confirm = Read-Host "`nStart MAGI loop? (y/n)"
+        if ($confirm -ne "y" -and $confirm -ne "Y") { return }
     }
     
-    # Main loop
     while ($iteration -le $MaxIter) {
         Write-Host "`n" + "=" * 70 -ForegroundColor Blue
         Write-Host "  ITERATION $iteration / $MaxIter" -ForegroundColor White
         Write-Host "=" * 70 -ForegroundColor Blue
         
-        # Check if task is complete
         if (Test-TaskComplete -TaskFilePath $TaskFilePath) {
             Write-Host "`n✅ ALL CRITERIA COMPLETE!" -ForegroundColor Green
-            Write-Host "Task finished in $iteration iterations.`n" -ForegroundColor Green
             break
         }
         
-        # Check for gutter condition
-        if (Test-GutterCondition -RalphDir $ralphDir) {
+        if (Test-GutterCondition -magiDir $magiDir) {
             Write-Host "`n⚠️  GUTTER DETECTED - Same errors repeating" -ForegroundColor Red
-            Write-Host "Check .ralph\errors.log and add guardrails.`n" -ForegroundColor Yellow
-            
-            $continue = Read-Host "Continue anyway? (y/n)"
-            if ($continue -ne "y" -and $continue -ne "Y") { break }
+            if ((Read-Host "Continue anyway? (y/n)") -ne "y") { break }
         }
         
-        # Refresh task info
         $taskInfo = Get-TaskInfo -TaskFilePath $TaskFilePath
         Write-Host "`n📊 Status: $($taskInfo.CompletedCriteria)/$($taskInfo.TotalCriteria) criteria complete" -ForegroundColor Cyan
-        Write-Host "   Remaining: $($taskInfo.RemainingCriteria) criteria`n" -ForegroundColor Gray
         
-        # Build and execute
         $prompt = Build-AgentPrompt -TaskInfo $taskInfo -Iteration $iteration -AgentName $AgentName
         $result = Invoke-Agent -AgentName $AgentName -Prompt $prompt -ModelName $ModelName -Iteration $iteration
         
-        if (-not $result.Success) {
-            Write-Host "`n❌ Agent execution failed" -ForegroundColor Red
-            Write-Host $result.Output -ForegroundColor DarkRed
-        }
-        
-        # Update iteration
         $iteration++
         Set-Content -Path $iterationFile -Value $iteration -Encoding UTF8
-        
-        Write-Host "`n⏳ Rotating to fresh context..." -ForegroundColor DarkGray
         Start-Sleep -Seconds 2
     }
     
-    if ($iteration -gt $MaxIter) {
-        Write-Host "`n⚠️  Max iterations ($MaxIter) reached" -ForegroundColor Yellow
-    }
-    
-    # Final summary
-    $finalTask = Get-TaskInfo -TaskFilePath $TaskFilePath
     Write-Host "`n" + "=" * 70 -ForegroundColor Cyan
-    Write-Host "  RALPH SESSION COMPLETE" -ForegroundColor White
+    Write-Host "  MAGI SESSION COMPLETE" -ForegroundColor White
     Write-Host "=" * 70 -ForegroundColor Cyan
-    Write-Host "  Iterations:  $($iteration - 1)"
-    Write-Host "  Completed:   $($finalTask.CompletedCriteria)/$($finalTask.TotalCriteria) criteria"
-    Write-Host "  Logs:        $ralphDir\activity.log"
-    Write-Host "  Errors:      $ralphDir\errors.log`n"
 }
 
 # ============================================================================
-# Watch Mode & Utilities
+# Watch Mode
 # ============================================================================
 
 function Start-WatchMode {
-    Write-Host "`n👁️  Watch Mode - Monitoring Ralph activity..." -ForegroundColor Cyan
-    Write-Host "Press Ctrl+C to stop`n" -ForegroundColor DarkGray
-    
-    $ralphDir = $script:Config.paths.ralphDir
-    $activityLog = Join-Path $ralphDir "activity.log"
-    
-    if (Test-Path $activityLog) {
-        Get-Content $activityLog -Wait -Tail 20
-    }
-    else {
-        Write-Host "No activity log found. Run ralph.ps1 first." -ForegroundColor Yellow
-    }
+    Write-Host "`n👁️  Watch Mode - Monitoring MAGI activity..." -ForegroundColor Cyan
+    $magiDir = $script:Config.paths.magiDir
+    $activityLog = Join-Path $magiDir "activity.log"
+    if (Test-Path $activityLog) { Get-Content $activityLog -Wait -Tail 20 }
+    else { Write-Host "No activity log found. Run magi.ps1 first." -ForegroundColor Yellow }
 }
 
 function Show-AvailableModels {
     param([string]$AgentName)
-    
     Write-Host "`n📋 Available models for $AgentName :" -ForegroundColor Cyan
-    $models = Get-AvailableModels -AgentName $AgentName
-    $models | ForEach-Object { Write-Host "   - $_" -ForegroundColor Gray }
-    Write-Host ""
+    Get-AvailableModels -AgentName $AgentName | ForEach-Object { Write-Host "   - $_" -ForegroundColor Gray }
 }
 
 # ============================================================================
 # Entry Point
 # ============================================================================
 
-# Load configuration
 Load-Configuration -ConfigPath $ConfigFile
-
-# Determine agent
 $selectedAgent = if ($Agent) { $Agent } else { $script:Config.defaultAgent }
 
-# List models mode
 if ($ListModels) {
     Show-AvailableModels -AgentName $selectedAgent
     exit 0
 }
 
-# Initialize
-Initialize-Ralph
+Initialize-MAGI
+if (-not (Test-AgentAvailable -AgentName $selectedAgent)) { exit 1 }
 
-# Check agent
-if (-not (Test-AgentAvailable -AgentName $selectedAgent)) {
-    exit 1
-}
-
-# Determine model
 $selectedModel = if ($Model) { $Model } else { $script:Config.agents[$selectedAgent].defaultModel }
 $maxIter = if ($MaxIterations -gt 0) { $MaxIterations } else { $script:Config.maxIterations }
 
-# Run
-if ($WatchOnly) {
-    Start-WatchMode
-}
-else {
-    Start-RalphLoop -AgentName $selectedAgent -ModelName $selectedModel -MaxIter $maxIter -TaskFilePath $TaskFile
-}
+if ($WatchOnly) { Start-WatchMode }
+else { Start-MAGILoop -AgentName $selectedAgent -ModelName $selectedModel -MaxIter $maxIter -TaskFilePath $TaskFile }

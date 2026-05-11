@@ -6,10 +6,10 @@ Transform MAGI into a production-ready MCP server and CLI tool that seamlessly i
 ## Proposed Architecture
 
 ### 1. CLI Entry Point (`src/index.ts`)
-The `magi` command will now support subcommands:
-- `magi serve` (default): Starts the MCP server via stdio.
-- `magi setup`: Automatically detects installed AI clients and registers the MAGI MCP server in their configuration files.
-- `magi run <task>`: Executes a task iteration directly from the terminal without needing an external AI client.
+The `magi-ai` command will now support subcommands:
+- `magi-ai serve` (default): Starts the MCP server via stdio.
+- `magi-ai setup`: Automatically detects installed AI clients and registers the MAGI MCP server in their configuration files.
+- `magi-ai run <task>`: Executes a task iteration directly from the terminal without needing an external AI client.
 
 ### 2. Auto-Registration System (`src/cli/setup.ts`)
 Logic to find and update:
@@ -55,7 +55,7 @@ Replace placeholders with official SDKs:
 ### Phase 3: Claude-style CLI Interface & Auto-Registration
 - Implement `src/cli/ui.ts` for standardized console logging (Reasoning, Actions, User).
 - Implement `src/cli/setup.ts` to register in Gemini CLI and Claude Desktop.
-- Implement interactive `magi run` loop.
+- Implement interactive `magi-ai run` loop.
 
 ### Phase 4: Verification & Documentation
 - Run tests.

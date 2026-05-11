@@ -1,14 +1,14 @@
 import * as fs from 'node:fs/promises';
 import * as path from 'node:path';
-import type { RalphConfig, IterationResult, AgentAdapter, AgentContext } from '../types/index.js';
+import type { MagiConfig, IterationResult, AgentAdapter, AgentContext } from '../types/index.js';
 
-export class RalphEngine {
-  private config: RalphConfig;
+export class MagiEngine {
+  private config: MagiConfig;
   private stateDir: string;
 
-  constructor(config: RalphConfig) {
+  constructor(config: MagiConfig) {
     this.config = config;
-    this.stateDir = config.stateDirectory || '.ralph';
+    this.stateDir = config.stateDirectory || '.magi';
   }
 
   async runIteration(agent: AgentAdapter, taskName: string): Promise<IterationResult> {

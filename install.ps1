@@ -1,10 +1,10 @@
 #Requires -Version 5.1
 <#
 .SYNOPSIS
-    Install Ralph for Windows - Multi-Agent Edition
+    Install MAGI for Windows - Multi-Agent Edition
 
 .DESCRIPTION
-    Sets up Ralph with support for multiple AI agents:
+    Sets up MAGI with support for multiple AI agents:
     - Cloud: Gemini, OpenAI, Anthropic, Azure, Cursor
     - Local: Ollama, LM Studio, LocalAI
     - Network: Custom endpoints
@@ -41,7 +41,7 @@ Write-Host @"
 
   ╔═══════════════════════════════════════════════════════════════════╗
   ║                                                                   ║
-  ║   RALPH FOR WINDOWS - Multi-Agent Edition                         ║
+  ║   MAGI FOR WINDOWS - Multi-Agent Edition                          ║
   ║   Autonomous AI Development with Context Management               ║
   ║                                                                   ║
   ║   Cloud:   Gemini │ OpenAI │ Anthropic │ Azure │ Cursor           ║
@@ -71,20 +71,20 @@ if (-not (Test-Path $TargetPath)) {
 $gitStatus = git -C $TargetPath status 2>&1
 if ($LASTEXITCODE -ne 0) {
     Write-Host "⚠️  Warning: Not a git repository" -ForegroundColor Yellow
-    Write-Host "   Ralph works best with git. Run 'git init' to initialize.`n" -ForegroundColor Gray
+    Write-Host "   MAGI works best with git. Run 'git init' to initialize.`n" -ForegroundColor Gray
 }
 
 # ============================================================================
 # Create Directory Structure
 # ============================================================================
 
-$scriptsDir = Join-Path $TargetPath ".ralph-scripts"
-$ralphDir = Join-Path $TargetPath ".ralph"
-$docsDir = Join-Path $TargetPath ".ralph-scripts\docs"
+$scriptsDir = Join-Path $TargetPath ".magi-scripts"
+$magiDir = Join-Path $TargetPath ".magi"
+$docsDir = Join-Path $TargetPath ".magi-scripts\docs"
 
 # Check existing
 if ((Test-Path $scriptsDir) -and -not $Force) {
-    Write-Host "⚠️  Ralph is already installed." -ForegroundColor Yellow
+    Write-Host "⚠️  MAGI is already installed." -ForegroundColor Yellow
     $confirm = Read-Host "   Reinstall? (y/n)"
     if ($confirm -ne "y" -and $confirm -ne "Y") {
         Write-Host "   Aborted.`n" -ForegroundColor Gray
@@ -94,7 +94,7 @@ if ((Test-Path $scriptsDir) -and -not $Force) {
 
 Write-Host "📂 Creating directories..." -ForegroundColor Gray
 New-Item -ItemType Directory -Path $scriptsDir -Force | Out-Null
-New-Item -ItemType Directory -Path $ralphDir -Force | Out-Null
+New-Item -ItemType Directory -Path $magiDir -Force | Out-Null
 New-Item -ItemType Directory -Path $docsDir -Force | Out-Null
 
 # ============================================================================
@@ -103,14 +103,12 @@ New-Item -ItemType Directory -Path $docsDir -Force | Out-Null
 
 Write-Host "`n📝 Creating scripts..." -ForegroundColor Gray
 
-# The main ralph.ps1 script (abbreviated version - full version in separate file)
-$ralphScriptContent = Get-Content "$PSScriptRoot\scripts\ralph.ps1" -Raw -ErrorAction SilentlyContinue
+$magiScriptContent = Get-Content "$PSScriptRoot\scripts\magi.ps1" -Raw -ErrorAction SilentlyContinue
 
-if (-not $ralphScriptContent) {
-    # Embedded minimal version if source not available
-    $ralphScriptContent = @'
+if (-not $magiScriptContent) {
+    $magiScriptContent = @'
 #Requires -Version 5.1
-# Ralph for Windows - Multi-Agent Edition
+# MAGI for Windows - Multi-Agent Edition
 # Full documentation: README.md
 
 [CmdletBinding()]
@@ -120,25 +118,21 @@ param(
     [string]$Model = "",
     [string]$Endpoint = "",
     [int]$MaxIterations = 20,
-    [string]$TaskFile = "RALPH_TASK.md",
+    [string]$TaskFile = "MAGI_TASK.md",
     [switch]$WatchOnly,
     [switch]$Force,
     [switch]$ListModels
 )
 
-Write-Host "`n=== RALPH FOR WINDOWS ===" -ForegroundColor Cyan
+Write-Host "`n=== MAGI FOR WINDOWS ===" -ForegroundColor Cyan
 Write-Host "Agent: $Agent"
 Write-Host "Model: $(if ($Model) { $Model } else { 'default' })"
 Write-Host ""
-
-# For full implementation, see the complete ralph.ps1 in the repository
-Write-Host "This is a minimal installer stub." -ForegroundColor Yellow
-Write-Host "Download the full package from GitHub for complete functionality." -ForegroundColor Yellow
 '@
 }
 
-Set-Content -Path (Join-Path $scriptsDir "ralph.ps1") -Value $ralphScriptContent -Encoding UTF8
-Write-Host "   ✅ ralph.ps1" -ForegroundColor Green
+Set-Content -Path (Join-Path $scriptsDir "magi.ps1") -Value $magiScriptContent -Encoding UTF8
+Write-Host "   ✅ magi.ps1" -ForegroundColor Green
 
 # ============================================================================
 # Create Init Script
@@ -148,19 +142,19 @@ $initScript = @'
 #Requires -Version 5.1
 param([switch]$Force, [switch]$ResetIteration, [switch]$KeepGuardrails)
 
-$RalphDir = ".ralph"
-Write-Host "`n🔧 Ralph Initialization" -ForegroundColor Cyan
+$magiDir = ".magi"
+Write-Host "`n🔧 MAGI Initialization" -ForegroundColor Cyan
 
-if (-not $Force -and (Test-Path $RalphDir)) {
-    if ((Read-Host "Reset Ralph state? (y/n)") -ne "y") { exit 0 }
+if (-not $Force -and (Test-Path $magiDir)) {
+    if ((Read-Host "Reset MAGI state? (y/n)") -ne "y") { exit 0 }
 }
 
 $guardrailsBackup = $null
-if ($KeepGuardrails -and (Test-Path "$RalphDir\guardrails.md")) {
-    $guardrailsBackup = Get-Content "$RalphDir\guardrails.md" -Raw
+if ($KeepGuardrails -and (Test-Path "$magiDir\guardrails.md")) {
+    $guardrailsBackup = Get-Content "$magiDir\guardrails.md" -Raw
 }
 
-if (-not (Test-Path $RalphDir)) { New-Item -ItemType Directory -Path $RalphDir -Force | Out-Null }
+if (-not (Test-Path $magiDir)) { New-Item -ItemType Directory -Path $magiDir -Force | Out-Null }
 
 $files = @{
     "progress.md" = "# Progress Log`n`n## Completed`n(None)`n`n## Status`nReady.`n"
@@ -171,7 +165,7 @@ $files = @{
 }
 
 foreach ($f in $files.Keys) {
-    $path = "$RalphDir\$f"
+    $path = "$magiDir\$f"
     if ($f -eq "guardrails.md" -and $guardrailsBackup) {
         Set-Content $path $guardrailsBackup -Encoding UTF8
     } else {
@@ -179,15 +173,11 @@ foreach ($f in $files.Keys) {
     }
 }
 
-if (-not $ResetIteration -and (Test-Path "$RalphDir\.iteration")) {
-    Write-Host "   Kept iteration counter" -ForegroundColor Gray
-}
-
-Write-Host "✅ Ralph initialized`n" -ForegroundColor Green
+Write-Host "✅ MAGI initialized`n" -ForegroundColor Green
 '@
 
-Set-Content -Path (Join-Path $scriptsDir "init-ralph.ps1") -Value $initScript -Encoding UTF8
-Write-Host "   ✅ init-ralph.ps1" -ForegroundColor Green
+Set-Content -Path (Join-Path $scriptsDir "init-magi.ps1") -Value $initScript -Encoding UTF8
+Write-Host "   ✅ init-magi.ps1" -ForegroundColor Green
 
 # ============================================================================
 # Create Batch Wrapper
@@ -196,13 +186,13 @@ Write-Host "   ✅ init-ralph.ps1" -ForegroundColor Green
 $batchWrapper = @'
 @echo off
 setlocal enabledelayedexpansion
-set "SCRIPT=%~dp0.ralph-scripts\ralph.ps1"
-if not exist "%SCRIPT%" set "SCRIPT=%~dp0ralph.ps1"
+set "SCRIPT=%~dp0.magi-scripts\magi.ps1"
+if not exist "%SCRIPT%" set "SCRIPT=%~dp0magi.ps1"
 
 if /i "%1"=="help" goto :help
 if /i "%1"=="-h" goto :help
 if /i "%1"=="watch" ( powershell -NoProfile -ExecutionPolicy Bypass -File "%SCRIPT%" -WatchOnly & exit /b )
-if /i "%1"=="init" ( powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0.ralph-scripts\init-ralph.ps1" %2 %3 & exit /b )
+if /i "%1"=="init" ( powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0.magi-scripts\init-magi.ps1" %2 %3 & exit /b )
 if /i "%1"=="models" ( powershell -NoProfile -ExecutionPolicy Bypass -File "%SCRIPT%" -Agent %2 -ListModels & exit /b )
 
 set "AGENT_ARG="
@@ -216,23 +206,23 @@ exit /b
 
 :help
 echo.
-echo RALPH FOR WINDOWS - Multi-Agent Edition
+echo MAGI FOR WINDOWS - Multi-Agent Edition
 echo.
-echo Usage: ralph.bat [agent] [options]
+echo Usage: magi.bat [agent] [options]
 echo.
 echo Agents: gemini, cursor, openai, codex, ollama, lmstudio, local, network, vscode
 echo.
 echo Examples:
-echo   ralph.bat                     Run with Gemini (default)
-echo   ralph.bat openai              Run with OpenAI
-echo   ralph.bat ollama -Model codellama:13b
-echo   ralph.bat watch               Monitor logs
+echo   magi.bat                     Run with Gemini (default)
+echo   magi.bat openai              Run with OpenAI
+echo   magi.bat ollama -Model codellama:13b
+echo   magi.bat watch               Monitor logs
 echo.
 exit /b
 '@
 
-Set-Content -Path (Join-Path $TargetPath "ralph.bat") -Value $batchWrapper -Encoding ASCII
-Write-Host "   ✅ ralph.bat" -ForegroundColor Green
+Set-Content -Path (Join-Path $TargetPath "magi.bat") -Value $batchWrapper -Encoding ASCII
+Write-Host "   ✅ magi.bat" -ForegroundColor Green
 
 # ============================================================================
 # Create Configuration
@@ -248,7 +238,7 @@ $configContent = @"
     "agents": {
         "gemini": {
             "type": "cli",
-            "defaultModel": "gemini-2.5-pro",
+            "defaultModel": "gemini-2.0-flash",
             "contextLimit": 1000000
         },
         "openai": {
@@ -285,15 +275,15 @@ $configContent = @"
 }
 "@
 
-Set-Content -Path (Join-Path $scriptsDir "ralph-config.json") -Value $configContent -Encoding UTF8
-Write-Host "   ✅ ralph-config.json" -ForegroundColor Green
+Set-Content -Path (Join-Path $scriptsDir "magi-config.json") -Value $configContent -Encoding UTF8
+Write-Host "   ✅ magi-config.json" -ForegroundColor Green
 
 # ============================================================================
 # Create Task File Template
 # ============================================================================
 
 if (-not $SkipTaskFile) {
-    $taskFilePath = Join-Path $TargetPath "RALPH_TASK.md"
+    $taskFilePath = Join-Path $TargetPath "MAGI_TASK.md"
     
     if (-not (Test-Path $taskFilePath)) {
         $taskTemplate = @'
@@ -318,7 +308,7 @@ test_command: npm test
 - **Notes**: [constraints, requirements]
 '@
         Set-Content -Path $taskFilePath -Value $taskTemplate -Encoding UTF8
-        Write-Host "   ✅ RALPH_TASK.md (template)" -ForegroundColor Green
+        Write-Host "   ✅ MAGI_TASK.md (template)" -ForegroundColor Green
     }
 }
 
@@ -337,7 +327,7 @@ $stateFiles = @{
 }
 
 foreach ($file in $stateFiles.Keys) {
-    $path = Join-Path $ralphDir $file
+    $path = Join-Path $magiDir $file
     if (-not (Test-Path $path)) {
         Set-Content -Path $path -Value $stateFiles[$file] -Encoding UTF8
     }
@@ -387,26 +377,27 @@ foreach ($key in $apiKeys) {
 Write-Host @"
 
 ╔═══════════════════════════════════════════════════════════════════╗
-║  ✅ RALPH INSTALLED SUCCESSFULLY                                  ║
+║  ✅ MAGI INSTALLED SUCCESSFULLY                                   ║
 ╚═══════════════════════════════════════════════════════════════════╝
 
 Quick Start:
 
-  1. Edit RALPH_TASK.md with your task
+  1. Edit MAGI_TASK.md with your task
 
-  2. Run Ralph:
-     .\ralph.bat                  # Gemini (default)
-     .\ralph.bat openai           # OpenAI GPT-4o
-     .\ralph.bat ollama           # Local Ollama
-     .\ralph.bat ollama -Model deepseek-coder:33b
+  2. Run MAGI:
+     magi-ai run "test"          # Run locally
+     .\magi.bat                  # Gemini (legacy script)
+     .\magi.bat openai           # OpenAI GPT-4o
+     .\magi.bat ollama           # Local Ollama
+     .\magi.bat ollama -Model deepseek-coder:33b
 
-  3. Monitor: .\ralph.bat watch
+  3. Monitor: .\magi.bat watch
 
 Agent Setup:
   - Gemini:  npm install -g @google/gemini-cli && gemini auth login
   - OpenAI:  `$env:OPENAI_API_KEY = "sk-..."
   - Ollama:  winget install Ollama.Ollama && ollama pull codellama:13b
 
-Docs: README.md | .ralph-scripts\docs\LOCAL_MODELS.md
+Docs: README.md | .magi-scripts\docs\LOCAL_MODELS.md
 
 "@ -ForegroundColor Cyan

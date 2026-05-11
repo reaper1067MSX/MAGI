@@ -6,7 +6,7 @@ export class GeminiAgent extends BaseAgent {
   private apiKey: string;
   private modelName: string;
 
-  constructor(apiKey?: string, modelName: string = 'gemini-2.5-pro') {
+  constructor(apiKey?: string, modelName: string = 'gemini-2.0-flash') {
     super('gemini');
     this.apiKey = apiKey || process.env.GEMINI_API_KEY || '';
     this.modelName = modelName;

@@ -1,9 +1,9 @@
 #!/bin/bash
 # =============================================================================
-# Ralph - Cross-Platform Autonomous AI Development
+# MAGI - Cross-Platform Autonomous AI Development
 # =============================================================================
 #
-# Implements Geoffrey Huntley's Ralph Wiggum technique for multiple AI agents:
+# Implements Geoffrey Huntley's MAGI Wiggum technique for multiple AI agents:
 #   - Gemini CLI (Google)
 #   - Claude Code CLI
 #   - OpenAI API (GPT-4, GPT-4o)
@@ -11,13 +11,13 @@
 #   - Networked models (OpenAI-compatible APIs)
 #
 # Usage:
-#   ./ralph.sh [agent] [options]
+#   ./magi.sh [agent] [options]
 #
 # Examples:
-#   ./ralph.sh                          # Run with Gemini (default)
-#   ./ralph.sh openai                   # Run with OpenAI
-#   ./ralph.sh ollama --model codellama # Run with Ollama
-#   ./ralph.sh watch                    # Monitor logs
+#   ./magi.sh                          # Run with Gemini (default)
+#   ./magi.sh openai                   # Run with OpenAI
+#   ./magi.sh ollama --model codellama # Run with Ollama
+#   ./magi.sh watch                    # Monitor logs
 #
 # Supports: macOS, Ubuntu, Debian, Raspberry Pi OS, Fedora, Arch, and more
 # =============================================================================
@@ -39,9 +39,9 @@ NC='\033[0m' # No Color
 
 DEFAULT_AGENT="gemini"
 DEFAULT_MAX_ITERATIONS=20
-RALPH_DIR=".ralph"
-TASK_FILE="RALPH_TASK.md"
-CONFIG_FILE=".ralph-scripts/ralph-config.json"
+MAGI_DIR=".magi"
+TASK_FILE="MAGI_TASK.md"
+CONFIG_FILE=".magi-scripts/magi-config.json"
 
 # Agent configurations (associative arrays)
 declare -A AGENT_TYPE
@@ -53,7 +53,7 @@ declare -A AGENT_FORMAT
 
 # CLI Agents
 AGENT_TYPE[gemini]="cli"
-AGENT_MODEL[gemini]="gemini-2.5-pro"
+AGENT_MODEL[gemini]="gemini-2.0-flash"
 AGENT_CONTEXT[gemini]=1000000
 
 AGENT_TYPE[claude]="cli"
@@ -116,7 +116,7 @@ log_warning() {
 }
 
 log_error() {
-    echo -e "${RED}✗ $1${NC}"
+    echo -e "${RED}✘ $1${NC}"
 }
 
 log_gray() {
@@ -131,10 +131,10 @@ show_help() {
     cat << 'EOF'
 
 ============================================================================
-  RALPH FOR LINUX - Multi-Agent Autonomous Development
+  MAGI FOR LINUX - Multi-Agent Autonomous Development
 ============================================================================
 
-Usage: ./ralph.sh [agent] [options]
+Usage: ./magi.sh [agent] [options]
 
 AGENTS (Cloud):
   gemini       Google Gemini CLI (default) - 1M+ token context, free tier
@@ -154,26 +154,26 @@ OPTIONS:
   --model <name>        Specify model (e.g., gpt-4o, codellama:34b)
   --endpoint <url>      API endpoint for local/network agents
   --max-iterations <n>  Maximum loop iterations (default: 20)
-  --task <file>         Task file (default: RALPH_TASK.md)
+  --task <file>         Task file (default: MAGI_TASK.md)
   --force               Skip confirmation prompts
   --list-models         Show available models for agent
   --watch               Monitor activity logs in real-time
   --help, -h            Show this help
 
 EXAMPLES:
-  ./ralph.sh                                    Run with Gemini (default)
-  ./ralph.sh openai                             Run with OpenAI GPT-4o
-  ./ralph.sh openai --model gpt-4-turbo         Run with specific model
-  ./ralph.sh ollama --model deepseek-coder:33b  Run with local DeepSeek
-  ./ralph.sh network --endpoint http://myserver:8080/v1/chat/completions
-  ./ralph.sh watch                              Monitor logs
-  ./ralph.sh ollama --list-models               List Ollama models
+  ./magi.sh                                    Run with Gemini (default)
+  ./magi.sh openai                             Run with OpenAI GPT-4o
+  ./magi.sh openai --model gpt-4-turbo         Run with specific model
+  ./magi.sh ollama --model deepseek-coder:33b  Run with local DeepSeek
+  ./magi.sh network --endpoint http://myserver:8080/v1/chat/completions
+  ./magi.sh watch                              Monitor logs
+  ./magi.sh ollama --list-models               List Ollama models
 
 ENVIRONMENT VARIABLES:
   OPENAI_API_KEY       Required for openai agent
   ANTHROPIC_API_KEY    Required for anthropic agent
-  RALPH_AGENT          Default agent (overrides config)
-  RALPH_MODEL          Default model
+  MAGI_AGENT          Default agent (overrides config)
+  MAGI_MODEL          Default model
 
 DOCUMENTATION:
   README.md              Full documentation
@@ -188,15 +188,15 @@ EOF
 # Initialization
 # =============================================================================
 
-initialize_ralph() {
-    # Create .ralph directory if it doesn't exist
-    if [[ ! -d "$RALPH_DIR" ]]; then
-        mkdir -p "$RALPH_DIR"
+initialize_magi() {
+    # Create .magi directory if it doesn't exist
+    if [[ ! -d "$MAGI_DIR" ]]; then
+        mkdir -p "$MAGI_DIR"
     fi
 
     # Initialize state files
-    if [[ ! -f "$RALPH_DIR/progress.md" ]]; then
-        cat > "$RALPH_DIR/progress.md" << 'EOF'
+    if [[ ! -f "$MAGI_DIR/progress.md" ]]; then
+        cat > "$MAGI_DIR/progress.md" << 'EOF'
 # Progress Log
 
 ## Completed Criteria
@@ -207,11 +207,11 @@ Starting fresh iteration.
 
 ## Notes
 EOF
-        echo "- Initialized: $(date '+%Y-%m-%d %H:%M:%S')" >> "$RALPH_DIR/progress.md"
+        echo "- Initialized: $(date '+%Y-%m-%d %H:%M:%S')" >> "$MAGI_DIR/progress.md"
     fi
 
-    if [[ ! -f "$RALPH_DIR/guardrails.md" ]]; then
-        cat > "$RALPH_DIR/guardrails.md" << 'EOF'
+    if [[ ! -f "$MAGI_DIR/guardrails.md" ]]; then
+        cat > "$MAGI_DIR/guardrails.md" << 'EOF'
 # Guardrails (Signs)
 
 These are lessons learned from previous iterations. Read these FIRST before starting work.
@@ -233,23 +233,23 @@ When something fails, add a sign:
 EOF
     fi
 
-    if [[ ! -f "$RALPH_DIR/activity.log" ]]; then
-        echo "# Activity Log" > "$RALPH_DIR/activity.log"
-        echo "[$(date '+%Y-%m-%d %H:%M:%S')] INIT Started" >> "$RALPH_DIR/activity.log"
+    if [[ ! -f "$MAGI_DIR/activity.log" ]]; then
+        echo "# Activity Log" > "$MAGI_DIR/activity.log"
+        echo "[$(date '+%Y-%m-%d %H:%M:%S')] INIT Started" >> "$MAGI_DIR/activity.log"
     fi
 
-    if [[ ! -f "$RALPH_DIR/errors.log" ]]; then
-        echo "# Error Log" > "$RALPH_DIR/errors.log"
+    if [[ ! -f "$MAGI_DIR/errors.log" ]]; then
+        echo "# Error Log" > "$MAGI_DIR/errors.log"
     fi
 
-    if [[ ! -f "$RALPH_DIR/.iteration" ]]; then
-        echo "1" > "$RALPH_DIR/.iteration"
+    if [[ ! -f "$MAGI_DIR/.iteration" ]]; then
+        echo "1" > "$MAGI_DIR/.iteration"
     fi
 
     # Check for task file
     if [[ ! -f "$TASK_FILE" ]]; then
         log_error "Task file not found: $TASK_FILE"
-        log_warning "Create a RALPH_TASK.md file with your task definition."
+        log_warning "Create a MAGI_TASK.md file with your task definition."
 
         cat > "$TASK_FILE" << 'EOF'
 ---
@@ -361,8 +361,6 @@ list_models() {
             echo "   - claude-3-5-haiku-20241022"
             ;;
         gemini)
-            echo "   - gemini-2.5-pro"
-            echo "   - gemini-2.5-flash"
             echo "   - gemini-2.0-flash"
             ;;
         *)
@@ -404,15 +402,15 @@ build_prompt() {
     local progress=""
     local errors=""
 
-    [[ -f "$RALPH_DIR/guardrails.md" ]] && guardrails=$(cat "$RALPH_DIR/guardrails.md")
-    [[ -f "$RALPH_DIR/progress.md" ]] && progress=$(cat "$RALPH_DIR/progress.md")
-    [[ -f "$RALPH_DIR/errors.log" ]] && errors=$(tail -30 "$RALPH_DIR/errors.log")
+    [[ -f "$MAGI_DIR/guardrails.md" ]] && guardrails=$(cat "$MAGI_DIR/guardrails.md")
+    [[ -f "$MAGI_DIR/progress.md" ]] && progress=$(cat "$MAGI_DIR/progress.md")
+    [[ -f "$MAGI_DIR/errors.log" ]] && errors=$(tail -30 "$MAGI_DIR/errors.log")
 
     # Get file list
     local file_list=$(find . -type f -maxdepth 3 \
         ! -path './node_modules/*' \
         ! -path './.git/*' \
-        ! -path './.ralph/*' \
+        ! -path './.magi/*' \
         ! -path './__pycache__/*' \
         ! -path './venv/*' \
         ! -path './dist/*' \
@@ -422,7 +420,7 @@ build_prompt() {
     local task_content=$(cat "$TASK_FILE")
 
     cat << EOF
-# RALPH AUTONOMOUS AGENT - ITERATION $iteration
+# MAGI AUTONOMOUS AGENT - ITERATION $iteration
 
 You are an autonomous coding agent working on a task. Your context is fresh each iteration.
 Progress persists in FILES and GIT, not in conversation history.
@@ -433,8 +431,8 @@ Progress persists in FILES and GIT, not in conversation history.
 2. **CHECK PROGRESS** - See what's already been done. Don't redo completed work.
 3. **WORK ON UNCHECKED CRITERIA** - Focus on [ ] items, not [x] items.
 4. **COMMIT FREQUENTLY** - Use git to save progress after each criterion.
-5. **UPDATE STATE FILES** - Write to .ralph/progress.md after completing work.
-6. **ADD GUARDRAILS** - If something fails repeatedly, add a Sign to .ralph/guardrails.md
+5. **UPDATE STATE FILES** - Write to .magi/progress.md after completing work.
+6. **ADD GUARDRAILS** - If something fails repeatedly, add a Sign to .magi/guardrails.md
 
 ## GUARDRAILS (READ FIRST!)
 
@@ -462,13 +460,13 @@ $task_content
 2. Check what criteria are already completed [x]
 3. Work on the next unchecked criterion [ ]
 4. Run tests after changes: $TEST_COMMAND
-5. Commit with: git add -A && git commit -m "ralph: [description]"
-6. Update .ralph/progress.md with completed work
+5. Commit with: git add -A && git commit -m "magi: [description]"
+6. Update .magi/progress.md with completed work
 7. If something fails repeatedly, add a guardrail
 
 ## STATE FILE FORMATS
 
-When updating .ralph/progress.md:
+When updating .magi/progress.md:
 \`\`\`markdown
 ## Completed Criteria
 - [x] Criterion 1 - completed in iteration N
@@ -481,7 +479,7 @@ Working on: [current criterion]
 [Any relevant notes]
 \`\`\`
 
-When adding a guardrail to .ralph/guardrails.md:
+When adding a guardrail to .magi/guardrails.md:
 \`\`\`markdown
 ### Sign: [Short description]
 - **Trigger**: [When this applies]
@@ -551,7 +549,7 @@ invoke_agent() {
     local iteration=$4
 
     local timestamp=$(date '+%Y-%m-%d %H:%M:%S')
-    echo "[$timestamp] === ITERATION $iteration - $agent ===" >> "$RALPH_DIR/activity.log"
+    echo "[$timestamp] === ITERATION $iteration - $agent ===" >> "$MAGI_DIR/activity.log"
 
     local agent_type=${AGENT_TYPE[$agent]}
 
@@ -585,7 +583,7 @@ invoke_cli_agent() {
     esac
 
     local timestamp=$(date '+%Y-%m-%d %H:%M:%S')
-    echo "[$timestamp] $agent completed" >> "$RALPH_DIR/activity.log"
+    echo "[$timestamp] $agent completed" >> "$MAGI_DIR/activity.log"
 }
 
 invoke_api_agent() {
@@ -620,10 +618,10 @@ invoke_api_agent() {
     [[ ${#response} -gt 500 ]] && echo "..."
 
     # Save full response
-    echo "$response" > "$RALPH_DIR/last_response.md"
+    echo "$response" > "$MAGI_DIR/last_response.md"
 
     local timestamp=$(date '+%Y-%m-%d %H:%M:%S')
-    echo "[$timestamp] $agent API completed" >> "$RALPH_DIR/activity.log"
+    echo "[$timestamp] $agent API completed" >> "$MAGI_DIR/activity.log"
 }
 
 # =============================================================================
@@ -636,12 +634,12 @@ check_task_complete() {
 }
 
 check_gutter_condition() {
-    if [[ ! -f "$RALPH_DIR/errors.log" ]]; then
+    if [[ ! -f "$MAGI_DIR/errors.log" ]]; then
         return 1
     fi
 
     # Check for repeated errors
-    local error_count=$(tail -20 "$RALPH_DIR/errors.log" | grep -ciE 'error|failed|exception' || echo 0)
+    local error_count=$(tail -20 "$MAGI_DIR/errors.log" | grep -ciE 'error|failed|exception' || echo 0)
     [[ $error_count -ge 3 ]]
 }
 
@@ -650,14 +648,14 @@ check_gutter_condition() {
 # =============================================================================
 
 watch_mode() {
-    log_info "Watch Mode - Monitoring Ralph activity..."
+    log_info "Watch Mode - Monitoring MAGI activity..."
     log_gray "Press Ctrl+C to stop"
     echo ""
 
-    if [[ -f "$RALPH_DIR/activity.log" ]]; then
-        tail -f "$RALPH_DIR/activity.log"
+    if [[ -f "$MAGI_DIR/activity.log" ]]; then
+        tail -f "$MAGI_DIR/activity.log"
     else
-        log_warning "No activity log found. Run ralph.sh first."
+        log_warning "No activity log found. Run magi.sh first."
     fi
 }
 
@@ -665,14 +663,14 @@ watch_mode() {
 # Main Loop
 # =============================================================================
 
-run_ralph_loop() {
+run_magi_loop() {
     local agent=$1
     local model=$2
     local max_iter=$3
 
     # Get current iteration
     local iteration=1
-    [[ -f "$RALPH_DIR/.iteration" ]] && iteration=$(cat "$RALPH_DIR/.iteration")
+    [[ -f "$MAGI_DIR/.iteration" ]] && iteration=$(cat "$MAGI_DIR/.iteration")
 
     # Get task info
     get_task_info "$TASK_FILE"
@@ -680,7 +678,7 @@ run_ralph_loop() {
     # Display summary
     echo ""
     echo -e "${CYAN}======================================================================${NC}"
-    echo -e "  RALPH FOR LINUX - Multi-Agent Edition"
+    echo -e "  MAGI FOR LINUX - Multi-Agent Edition"
     echo -e "${CYAN}======================================================================${NC}"
     echo ""
     log_gray "  Agent:       $agent (${AGENT_TYPE[$agent]})"
@@ -698,7 +696,7 @@ run_ralph_loop() {
 
     if [[ "$FORCE" != "true" ]]; then
         echo ""
-        read -p "Start Ralph loop? (y/n) " confirm
+        read -p "Start MAGI loop? (y/n) " confirm
         if [[ "$confirm" != "y" && "$confirm" != "Y" ]]; then
             log_warning "Aborted."
             exit 0
@@ -724,7 +722,7 @@ run_ralph_loop() {
         if check_gutter_condition; then
             echo ""
             log_error "GUTTER DETECTED - Same errors repeating"
-            log_warning "Check .ralph/errors.log and add guardrails."
+            log_warning "Check .magi/errors.log and add guardrails."
 
             read -p "Continue anyway? (y/n) " cont
             [[ "$cont" != "y" && "$cont" != "Y" ]] && break
@@ -742,7 +740,7 @@ run_ralph_loop() {
 
         # Update iteration
         iteration=$((iteration + 1))
-        echo "$iteration" > "$RALPH_DIR/.iteration"
+        echo "$iteration" > "$MAGI_DIR/.iteration"
 
         log_gray "Rotating to fresh context..."
         sleep 2
@@ -757,12 +755,12 @@ run_ralph_loop() {
     get_task_info "$TASK_FILE"
     echo ""
     echo -e "${CYAN}======================================================================${NC}"
-    echo -e "  RALPH SESSION COMPLETE"
+    echo -e "  MAGI SESSION COMPLETE"
     echo -e "${CYAN}======================================================================${NC}"
     echo "  Iterations:  $((iteration - 1))"
     echo "  Completed:   $CHECKED/$TOTAL criteria"
-    echo "  Logs:        $RALPH_DIR/activity.log"
-    echo "  Errors:      $RALPH_DIR/errors.log"
+    echo "  Logs:        $MAGI_DIR/activity.log"
+    echo "  Errors:      $MAGI_DIR/errors.log"
     echo ""
 }
 
@@ -853,7 +851,7 @@ if ! command -v curl &> /dev/null; then
 fi
 
 # Initialize
-initialize_ralph
+initialize_magi
 
 # Check agent availability
 if ! check_agent_available "$AGENT"; then
@@ -861,4 +859,4 @@ if ! check_agent_available "$AGENT"; then
 fi
 
 # Run the loop
-run_ralph_loop "$AGENT" "$MODEL" "$MAX_ITERATIONS"
+run_magi_loop "$AGENT" "$MODEL" "$MAX_ITERATIONS"
