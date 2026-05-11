@@ -1,97 +1,41 @@
-import { Server } from '@modelcontextprotocol/sdk/server/index.js';
-import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
-import {
-  CallToolRequestSchema,
-  ListToolsRequestSchema,
-} from '@modelcontextprotocol/sdk/types.js';
-import { RalphEngine } from './engine/RalphEngine.js';
-import { loadConfig } from './config/index.js';
-import { GeminiAgent } from './agents/GeminiAgent.js';
-import { OpenAIAgent, OllamaAgent } from './agents/OpenAIAgent.js';
-import type { AgentAdapter } from './types/index.js';
+import { Command } from 'commander';
+import chalk from 'chalk';
+import { startMcpServer } from './mcp/server.js';
 
-async function main() {
-  const config = await loadConfig('ralph-config.json');
-  const engine = new RalphEngine(config);
-  
-  const server = new Server(
-    {
-      name: 'ralph-mcp-server',
-      version: '1.0.0',
-    },
-    {
-      capabilities: {
-        tools: {},
-      },
-    }
-  );
+const program = new Command();
 
-  const agents: Record<string, AgentAdapter> = {
-    'gemini-cli': new GeminiAgent(),
-    'openai': new OpenAIAgent(),
-    'ollama': new OllamaAgent(),
-  };
+program
+  .name('magi')
+  .description('MAGI (formerly Ralph) - Task-based AI orchestrator and MCP server')
+  .version('1.0.0');
 
-  server.setRequestHandler(ListToolsRequestSchema, async () => ({
-    tools: [
-      {
-        name: 'run_ralph_iteration',
-        description: 'Run a single Ralph iteration for a task',
-        inputSchema: {
-          type: 'object',
-          properties: {
-            taskName: { type: 'string' },
-            agentName: { type: 'string' },
-          },
-          required: ['taskName'],
-        },
-      },
-      {
-        name: 'get_ralph_status',
-        description: 'Get current status of Ralph engine',
-        inputSchema: { type: 'object', properties: {} },
-      },
-    ],
-  }));
-
-  server.setRequestHandler(CallToolRequestSchema, async (request) => {
-    switch (request.params.name) {
-      case 'run_ralph_iteration': {
-        const taskName = request.params.arguments?.taskName as string;
-        const agentName = (request.params.arguments?.agentName as string) || config.defaultAgent;
-        const agent = agents[agentName] || agents[config.defaultAgent];
-
-        const result = await engine.runIteration(agent, taskName);
-        return {
-          content: [
-            {
-              type: 'text',
-              text: JSON.stringify(result, null, 2),
-            },
-          ],
-        };
-      }
-      case 'get_ralph_status': {
-        return {
-          content: [
-            {
-              type: 'text',
-              text: `Ralph Engine Active. State Dir: ${engine.getStateDir()}`,
-            },
-          ],
-        };
-      }
-      default:
-        throw new Error('Tool not found');
+// Default command: Start MCP Server
+program
+  .command('serve', { isDefault: true })
+  .description('Start the MAGI MCP server (default)')
+  .action(async () => {
+    try {
+      await startMcpServer();
+    } catch (error) {
+      console.error(chalk.red('Fatal error starting MCP server:'), error);
+      process.exit(1);
     }
   });
 
-  const transport = new StdioServerTransport();
-  await server.connect(transport);
-  console.error('Ralph MCP Server running on stdio');
-}
+program
+  .command('setup')
+  .description('Auto-register MAGI in popular AI clients (Gemini CLI, Claude Desktop)')
+  .action(async () => {
+    console.log(chalk.blue('Setup command coming soon...'));
+    // TODO: Implement setup logic
+  });
 
-main().catch((error) => {
-  console.error('Fatal error in main():', error);
-  process.exit(1);
-});
+program
+  .command('run <task>')
+  .description('Execute a MAGI task iteration interactively')
+  .action(async (task) => {
+    console.log(chalk.blue(`Run command for task '${task}' coming soon...`));
+    // TODO: Implement interactive run logic
+  });
+
+program.parse(process.argv);
