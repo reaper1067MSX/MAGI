@@ -4,9 +4,19 @@
   "description": "Ralph Node.js MCP Server",
   "main": "dist/index.js",
   "type": "module",
+  "bin": {
+    "ralph-mcp": "./bin/ralph-mcp.js"
+  },
+  "files": [
+    "dist",
+    "bin",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
     "build": "tsc",
-    "test": "vitest run"
+    "test": "vitest run",
+    "prepare": "npm run build"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.1",
