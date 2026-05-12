@@ -35,7 +35,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - **Command Consolidation** - Unified the Gemini CLI experience under the `/magi` command, removing the redundant `/magi-ai` skill.
-- **Improved UX** - Updated all descriptions to Spanish in Gemini CLI for a more localized and professional experience.
+- **Improved UX** - Updated command descriptions for clearer MAGI naming and consistency across CLI surfaces.
 - **MCP Key Refactor** - Renamed internal MCP server key to `magi-mcp` to prevent naming collisions with the main skill.
 
 ### Fixed
