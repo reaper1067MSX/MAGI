@@ -104,16 +104,16 @@ Recommended instances:
 
 ```bash
 # Using nohup
-nohup magi-ai run "deployment" > MAGI.log 2>&1 &
+nohup magi run "deployment" > MAGI.log 2>&1 &
 
 # Using screen
 screen -S MAGI
-magi-ai run "deployment"
+magi run "deployment"
 # Ctrl+A, D to detach
 
 # Using tmux
 tmux new -s MAGI
-magi-ai run "deployment"
+magi run "deployment"
 # Ctrl+B, D to detach
 ```
 
@@ -130,7 +130,7 @@ After=network.target
 Type=simple
 User=ubuntu
 WorkingDirectory=/home/ubuntu/my-project
-ExecStart=magi-ai run "daily-task"
+ExecStart=magi run "daily-task"
 Restart=on-failure
 RestartSec=10
 Environment=GEMINI_API_KEY=your-key-here
@@ -157,10 +157,10 @@ Run MAGI on schedule:
 crontab -e
 
 # Run daily at 2 AM
-0 2 * * * cd /home/ubuntu/my-project && magi-ai run "daily-task" >> /var/log/MAGI.log 2>&1
+0 2 * * * cd /home/ubuntu/my-project && magi run "daily-task" >> /var/log/MAGI.log 2>&1
 
 # Run every 4 hours
-0 */4 * * * cd /home/ubuntu/my-project && magi-ai run "daily-task" >> /var/log/MAGI.log 2>&1
+0 */4 * * * cd /home/ubuntu/my-project && magi run "daily-task" >> /var/log/MAGI.log 2>&1
 ```
 
 ## CI/CD Integration
@@ -202,7 +202,7 @@ jobs:
       - name: Run MAGI
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-        run: magi-ai run "deployment"
+        run: magi run "deployment"
 
       - name: Create PR
         uses: peter-evans/create-pull-request@v5
@@ -219,7 +219,7 @@ MAGI:
   script:
     - apt-get update && apt-get install -y curl git
     - curl -fsSL https://raw.githubusercontent.com/craigm26/MAGI/main/install.sh | bash -s -- --agent gemini
-    - magi-ai run "deployment"
+    - magi run "deployment"
   artifacts:
     paths:
       - "*.md"
@@ -245,7 +245,7 @@ pipeline {
 
         stage('Run MAGI') {
             steps {
-                sh 'magi-ai run "deployment"'
+                sh 'magi run "deployment"'
             }
         }
     }
@@ -275,7 +275,7 @@ RUN git clone https://github.com/craigm26/MAGI.git /opt/MAGI
 WORKDIR /opt/MAGI
 
 # Set entrypoint
-ENTRYPOINT ["magi-ai run "deployment""]
+ENTRYPOINT ["magi run "deployment""]
 ```
 
 ### Docker Compose
@@ -373,10 +373,10 @@ chmod 600 ~/.gitconfig
 
 ```bash
 # Send logs to file
-magi-ai run "deployment" 2>&1 | tee -a /var/log/MAGI/$(date +%Y%m%d).log
+magi run "deployment" 2>&1 | tee -a /var/log/MAGI/$(date +%Y%m%d).log
 
 # With timestamps
-magi-ai run "deployment" 2>&1 | while read line; do echo "$(date '+%Y-%m-%d %H:%M:%S') $line"; done | tee -a MAGI.log
+magi run "deployment" 2>&1 | while read line; do echo "$(date '+%Y-%m-%d %H:%M:%S') $line"; done | tee -a MAGI.log
 ```
 
 ### Health Checks
@@ -452,7 +452,7 @@ free -h
 pkill ollama
 
 # Use cloud-based agent
-magi-ai run "deployment" --agent gemini
+magi run "deployment" --agent gemini
 ```
 
 ### Disk Space

@@ -68,17 +68,17 @@ ollama pull deepseek-coder:6.7b
 | Qwen2.5 Coder 7B | `ollama pull qwen2.5-coder:7b` | 8GB | Very good |
 | Qwen2.5 Coder 14B | `ollama pull qwen2.5-coder:14b` | 16GB | Excellent |
 
-### Using with MAGI-AI
+### Using with MAGI
 
 ```powershell
 # Make sure Ollama is running
 ollama serve
 
-# Run MAGI-AI with Ollama
-magi-ai run "local-dev" --agent ollama
+# Run MAGI with Ollama
+magi run "local-dev" --agent ollama
 
 # Specify model
-magi-ai run "local-dev" --agent ollama --model deepseek-coder:33b
+magi run "local-dev" --agent ollama --model deepseek-coder:33b
 ```
 
 ## Option 2: LM Studio
@@ -91,15 +91,15 @@ GUI application for running local models - great for beginners.
 2. Install and launch
 3. Go to "Discover" tab and download models
 
-### Setup for MAGI-AI
+### Setup for MAGI
 
 1. Load a model in LM Studio
 2. Go to "Local Server" tab
 3. Click "Start Server" (default: localhost:1234)
-4. Run MAGI-AI:
+4. Run MAGI:
 
 ```powershell
-magi-ai run "local-task" --agent lmstudio
+magi run "local-task" --agent lmstudio
 ```
 
 ## Network Setup
@@ -116,8 +116,8 @@ ollama serve --host 0.0.0.0
 ### Client Machine (your dev machine)
 
 ```powershell
-# Use with MAGI-AI
-magi-ai run "remote-task" --agent network --endpoint http://192.168.1.100:11434/api/chat --model codellama:13b
+# Use with MAGI
+magi run "remote-task" --agent network --endpoint http://192.168.1.100:11434/api/chat --model codellama:13b
 ```
 
 ### Network Config Example
@@ -157,8 +157,8 @@ Use local models for iteration, cloud for complex tasks:
 
 ```powershell
 # Quick iterations with local model
-magi-ai run "fix-css" --agent ollama
+magi run "fix-css" --agent ollama
 
 # Stuck? Switch to cloud for help
-magi-ai run "fix-css" --agent openai --model gpt-4o
+magi run "fix-css" --agent openai --model gpt-4o
 ```

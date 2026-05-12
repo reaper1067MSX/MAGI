@@ -1,6 +1,6 @@
 ﻿# Quick Start - MAGI Multi-Agent
 
-Get MAGI-AI running in 5 minutes with any AI agent.
+Get MAGI running in 5 minutes with any AI agent.
 
 ## Choose Your Agent
 
@@ -22,7 +22,7 @@ npm install -g @google/gemini-cli
 gemini auth login
 
 # 2. Run
-magi-ai run "my-task"
+magi run "my-task"
 ```
 
 ### Option B: OpenAI
@@ -32,7 +32,7 @@ magi-ai run "my-task"
 $env:OPENAI_API_KEY = "sk-..."
 
 # 2. Run
-magi-ai run "my-task" openai
+magi run "my-task" openai
 ```
 
 ### Option C: Ollama (Local)
@@ -45,14 +45,14 @@ winget install Ollama.Ollama
 ollama pull codellama:13b
 
 # 3. Run
-magi-ai run "my-task" ollama
+magi run "my-task" ollama
 ```
 
 ### Option D: Network Model
 
 ```powershell
 # Point to any OpenAI-compatible API
-magi-ai run "my-task" network -Endpoint http://192.168.1.100:8080/v1/chat/completions
+magi run "my-task" network -Endpoint http://192.168.1.100:8080/v1/chat/completions
 ```
 
 ## Define Your Task
@@ -77,10 +77,10 @@ test_command: npm test
 
 ```powershell
 # Run
-magi-ai run "my-task"
+magi run "my-task"
 
 # Watch progress
-magi-ai run "my-task" watch
+magi run "my-task" watch
 ```
 
 ## When Things Go Wrong

@@ -96,13 +96,13 @@ chmod +x magi.sh install.sh
 
 ```bash
 # With Gemini (default)
-magi-ai run "my-task"
+magi run "my-task"
 
 # With Ollama
-magi-ai run "my-task" --agent ollama
+magi run "my-task" --agent ollama
 
 # With OpenAI
-magi-ai run "my-task" --agent openai
+magi run "my-task" --agent openai
 ```
 
 ## Raspberry Pi Setup
@@ -128,7 +128,7 @@ ollama pull codellama:7b        # 4GB, needs 8GB Pi
 ollama pull tinyllama:latest    # 600MB, very fast
 
 # Run MAGI with small model
-magi-ai run "my-task" --agent ollama --model phi:latest
+magi run "my-task" --agent ollama --model phi:latest
 ```
 
 ### Performance Tips for Pi
@@ -160,7 +160,7 @@ After=network.target
 Type=simple
 User=pi
 WorkingDirectory=/home/pi/myproject
-ExecStart=/usr/local/bin/magi-ai run "my-task"
+ExecStart=/usr/local/bin/magi run "my-task"
 Restart=on-failure
 
 [Install]
@@ -192,7 +192,7 @@ cd MAGI
 chmod +x magi.sh
 
 # Run in background
-nohup magi-ai run "my-task" > magi.log 2>&1 &
+nohup magi run "my-task" > magi.log 2>&1 &
 ```
 
 ### Using Screen or tmux
@@ -203,7 +203,7 @@ sudo apt install -y screen
 
 # Start MAGI in screen
 screen -S MAGI
-magi-ai run "my-task"
+magi run "my-task"
 
 # Detach: Ctrl+A, D
 # Reattach: screen -r MAGI
@@ -224,7 +224,7 @@ RUN npm install -g magi-orchestrator
 WORKDIR /app
 COPY . .
 
-CMD ["magi-ai", "run", "my-task"]
+CMD ["magi", "run", "my-task"]
 ```
 
 ```bash
@@ -291,10 +291,10 @@ chmod +x magi.sh
 
 ```bash
 # Use smaller models
-magi-ai run "my-task" --agent ollama --model phi:latest
+magi run "my-task" --agent ollama --model phi:latest
 
 # Or use API agents
-magi-ai run "my-task" --agent gemini
+magi run "my-task" --agent gemini
 ```
 
 ### Node.js version too old
@@ -321,7 +321,7 @@ sudo systemctl edit ollama
 
 **Client (Raspberry Pi or laptop):**
 ```bash
-magi-ai run "my-task" --agent network --endpoint http://192.168.1.100:11434/api/chat --model codellama:34b
+magi run "my-task" --agent network --endpoint http://192.168.1.100:11434/api/chat --model codellama:34b
 ```
 
 ## Best Practices
@@ -329,7 +329,7 @@ magi-ai run "my-task" --agent network --endpoint http://192.168.1.100:11434/api/
 1. **Use Git** - MAGI commits progress, so initialize git in your project
 2. **Write clear tasks** - Specific success criteria help MAGI succeed
 3. **Add guardrails** - When something fails repeatedly, add a sign
-4. **Monitor logs** - Use `magi-ai run watch` to see activity (Note: check if watch is a command)
+4. **Monitor logs** - Use `magi run watch` to see activity (Note: check if watch is a command)
 5. **Start small** - Test with 2-3 iterations before long runs
 
 ## Next Steps

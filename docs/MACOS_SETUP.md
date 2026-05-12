@@ -113,20 +113,20 @@ Implement user login and registration.
 EOF
 
 # Run MAGI
-magi-ai run "my-task"
+magi run "my-task"
 ```
 
 ### With Specific Agent
 
 ```bash
 # Use Gemini
-magi-ai run "my-task" --agent gemini
+magi run "my-task" --agent gemini
 
 # Use Ollama with specific model
-magi-ai run "my-task" --agent ollama --model codellama:13b
+magi run "my-task" --agent ollama --model codellama:13b
 
 # Use Claude
-magi-ai run "my-task" --agent claude
+magi run "my-task" --agent claude
 ```
 
 ## Configuration
@@ -231,7 +231,7 @@ node --version  # Should be 18+
 
 ```bash
 chmod +x magi.sh
-magi-ai run "my-task"
+magi run "my-task"
 ```
 
 ### Model Too Slow
@@ -256,14 +256,14 @@ Works with any terminal:
 ```bash
 # Open terminal in VS Code
 # Run MAGI from integrated terminal
-magi-ai run "my-task"
+magi run "my-task"
 ```
 
 ### Cursor
 
 ```bash
 # Same as VS Code
-magi-ai run "my-task"
+magi run "my-task"
 ```
 
 ## Launchd Service (Optional)

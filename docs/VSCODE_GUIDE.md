@@ -1,6 +1,6 @@
 # VS Code Integration Guide
 
-MAGI-AI supports VS Code through **Gemini Code Assist** agent mode. Since VS Code doesn't have a CLI agent interface like Gemini CLI or Cursor, MAGI operates in "manual mode" where you copy prompts to the agent.
+MAGI supports VS Code through **Gemini Code Assist** agent mode. Since VS Code doesn't have a CLI agent interface like Gemini CLI or Cursor, MAGI operates in "manual mode" where you copy prompts to the agent.
 
 ## Prerequisites
 
@@ -20,7 +20,7 @@ MAGI-AI supports VS Code through **Gemini Code Assist** agent mode. Since VS Cod
 
 ```powershell
 # Run MAGI in VS Code mode
-magi-ai run "my-task" --agent vscode
+magi run "my-task" --agent vscode
 ```
 
 ### The Manual Loop
@@ -29,7 +29,7 @@ magi-ai run "my-task" --agent vscode
 2. **Copy the prompt** from that file
 3. **Paste into VS Code** Gemini Agent chat
 4. **Let the agent work** (approve file changes and shell commands)
-5. **When done**, return to MAGI-AI and press Enter
+5. **When done**, return to MAGI and press Enter
 6. **MAGI checks progress** and either:
    - Declares victory if all criteria are complete
    - Generates a new prompt for the next iteration
