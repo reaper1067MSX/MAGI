@@ -51,7 +51,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Apple Silicon GPU acceleration with Ollama
   - Automatic detection of Mac architecture
   - `docs/MACOS_SETUP.md` - Comprehensive macOS setup guide
-- **Server/Cloud Support** - Deploy Ralph on any server or cloud platform
+- **Server/Cloud Support** - Deploy MAGI on any server or cloud platform
   - AWS EC2, Google Cloud, Azure, DigitalOcean, Linode, Vultr, Hetzner
   - CI/CD integration (GitHub Actions, GitLab CI, Jenkins)
   - Docker and Docker Compose configurations

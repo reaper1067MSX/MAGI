@@ -38,45 +38,44 @@ Feature suggestions are welcome! Please include:
 
 ## Development Setup
 
-```powershell
+```bash
 # Clone your fork
 git clone https://github.com/YOUR_USERNAME/MAGI.git
 cd MAGI
 
+# Install dependencies
+npm install
+
 # Create a branch
 git checkout -b feature/your-feature-name
 
-# Make changes and test
-.\MAGI.bat <agent> -MaxIterations 3
+# Make changes and build
+npm run build
+
+# Test your changes
+magi run "test-task"
 ```
 
 ## Coding Style
 
-### PowerShell
+### TypeScript
 
-- Use PascalCase for function names: `Get-TaskInfo`, `Invoke-Agent`
+- Use explicit types and interfaces
 - Use descriptive variable names
 - Add comments for complex logic
-- Follow [PowerShell Best Practices](https://docs.microsoft.com/en-us/powershell/scripting/developer/cmdlet/strongly-encouraged-development-guidelines)
+- Follow [MAGI's established patterns](src/GEMINI.md)
 
-```powershell
-# Good
-function Get-TaskInfo {
-    param([string]$TaskFilePath)
-    # Parse task file and return structured info
-    ...
-}
-
-# Avoid
-function gti {
-    param($p)
+```typescript
+// Good
+async function runIteration(agent: AgentAdapter, taskName: string): Promise<IterationResult> {
+    // Process one autonomous loop
     ...
 }
 ```
 
 ### Documentation
 
-- Use clear, concise language
+- Use clear, concise language in English
 - Include code examples
 - Keep formatting consistent with existing docs
 
@@ -84,59 +83,38 @@ function gti {
 
 Before submitting a PR, test with at least:
 
-1. **One CLI agent** (Gemini or Cursor)
-2. **One API agent** (OpenAI or Ollama)
-3. **Edge cases**: Empty task file, missing config, etc.
+1. **Local tests**: `npm test`
+2. **Integration tests**: `src/__tests__/e2e.test.ts`
+3. **One CLI agent** (Gemini or Cursor)
+4. **One API agent** (OpenAI or Ollama)
 
-```powershell
-# Basic test
-.\MAGI.bat gemini -MaxIterations 2 -Force
+```bash
+# Run automated tests
+npm test
 
-# Test with different agent
-.\MAGI.bat ollama -Model codellama:7b -MaxIterations 2 -Force
+# Manual test
+magi run "test-task" --agent gemini
 ```
-
-## Adding a New Agent
-
-To add support for a new AI agent:
-
-1. **Add configuration** in `MAGI.ps1`:
-```powershell
-$script:DefaultConfig.agents["newagent"] = @{
-    type = "api"  # or "cli"
-    endpoint = "https://api.example.com/v1/chat"
-    defaultModel = "model-name"
-    contextLimit = 100000
-    apiKeyEnvVar = "NEWAGENT_API_KEY"
-}
-```
-
-2. **Implement the client** if needed (for non-OpenAI-compatible APIs)
-
-3. **Update documentation**:
-   - Add to README.md agents table
-   - Add setup instructions to docs/
-
-4. **Test thoroughly** with real API calls
 
 ## Project Structure
 
 ```
 MAGI/
-â”œâ”€â”€ MAGI.ps1           # Main script
-â”œâ”€â”€ MAGI.bat           # Windows launcher
-â”œâ”€â”€ docs/
-â”‚   â”œâ”€â”€ QUICKSTART.md
-â”‚   â”œâ”€â”€ LOCAL_MODELS.md
-â”‚   â””â”€â”€ VSCODE_GUIDE.md
-â”œâ”€â”€ templates/
-â”‚   â”œâ”€â”€ MAGI_TASK_example.md
-â”‚   â””â”€â”€ MAGI-config.json
-â”œâ”€â”€ README.md
-â”œâ”€â”€ LICENSE
-â”œâ”€â”€ CONTRIBUTING.md
-â”œâ”€â”€ CODE_OF_CONDUCT.md
-â””â”€â”€ CHANGELOG.md
+├── bin/                # CLI entry point
+├── dist/               # Compiled code
+├── docs/               # Guides and documentation
+├── src/                # Source code (TypeScript)
+│   ├── agents/         # AI agent adapters
+│   ├── cli/            # CLI UI and setup logic
+│   ├── engine/         # Core orchestration engine
+│   ├── mcp/            # MCP server implementation
+│   └── types/          # Shared type definitions
+├── templates/          # Config and task templates
+├── README.md           # Main documentation
+├── LICENSE             # MIT License
+├── CONTRIBUTING.md     # This file
+├── CODE_OF_CONDUCT.md
+└── CHANGELOG.md        # History of changes
 ```
 
 ## Commit Messages
