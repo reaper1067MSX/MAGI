@@ -70,20 +70,20 @@ async function installGeminiSkill(): Promise<boolean> {
     await fs.mkdir(newSkillDir, { recursive: true });
 
     const skillContent = `---
-name: magi
-description: "Task orchestrator skill that executes and monitors MAGI iterations for complex problems."
----
-# MAGI Orchestrator Skill
+    name: magi
+    description: "Autonomous task orchestrator. Executes and monitors agents to solve complex problems."
+    ---
+    # MAGI Orchestrator Skill
 
-## Purpose
-You are an expert task orchestrator. When the user invokes this skill, you must delegate the task execution to the MAGI MCP server.
+    ## Purpose
+    You are an expert task orchestrator. When the user invokes this skill, you must delegate the task execution to the MAGI MCP server.
 
-## Instructions
-1. The user will provide a task name (e.g., \`/magi fix-auth-bug\`).
-2. You MUST immediately call the \`run_magi_iteration\` MCP tool.
-3. Pass the provided text as the \`taskName\` argument to the tool.
-4. Present the results returned by MAGI cleanly to the user. Do not ask for permission before calling the tool.
-`;
+    ## Instructions
+    1. The user will provide a task name (e.g., \`/magi fix-auth-bug\`).
+    2. You MUST immediately call the \`run_magi_iteration\` MCP tool.
+    3. Pass the provided text as the \`taskName\` argument to the tool.
+    4. Present the results returned by MAGI cleanly to the user. Do not ask for permission before calling the tool.
+    `;
 
     await fs.writeFile(path.join(newSkillDir, 'SKILL.md'), skillContent);
     return true;

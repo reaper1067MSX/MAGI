@@ -7,8 +7,8 @@ import { runInteractive } from './cli/run.js';
 const program = new Command();
 
 program
-  .name('magi-ai')
-  .description('MAGI - Task-based AI orchestrator and MCP server')
+  .name('magi')
+  .description('Autonomous task orchestrator - Task-based AI orchestrator and MCP server')
   .version('1.2.2');
 
 // Default command: Start MCP Server
