@@ -26,7 +26,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Legacy hardcoded string placeholders in agent adapters.
 - Older "Ralph" command references in documentation and templates.
 
-## [1.2.0] - 2026-01-12
+## [Unreleased]
+
+### Added
+- **Continuous Integration (CI)** - Added GitHub Actions workflow to run tests automatically on Pull Requests and pushes to `main`.
+- **New Short Command** - Added `magi` as a shorter alias for `magi-ai`.
+- **PR Template** - Formalized Pull Request template for better code reviews.
+
+### Changed
+- **Command Consolidation** - Unified the Gemini CLI experience under the `/magi` command, removing the redundant `/magi-ai` skill.
+- **Improved UX** - Updated all descriptions to Spanish in Gemini CLI for a more localized and professional experience.
+- **MCP Key Refactor** - Renamed internal MCP server key to `magi-mcp` to prevent naming collisions with the main skill.
+
+### Fixed
+- **MCP Detection** - Fixed an issue where Gemini CLI would fail to detect the MAGI MCP server due to incorrect command paths in `config.json`.
+- **Skill Cleanup** - Automated the removal of the old `magi-ai` skill during setup.
+
+## [1.2.1] - 2026-05-12
 
 ### Added
 
