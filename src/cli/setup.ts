@@ -23,13 +23,13 @@ export async function runSetup() {
   }
   results.push({ name: 'Gemini CLI', ...geminiResult });
 
-  // 2. Gemini CLI Skill (/magi-ai)
-  ui.startAction('Installing /magi-ai Skill for Gemini CLI...');
+  // 2. Gemini CLI Skill (/magi)
+  ui.startAction('Installing /magi Skill for Gemini CLI...');
   const skillResult = await installGeminiSkill();
   if (skillResult) {
-    ui.succeedAction('Skill /magi-ai installed successfully');
+    ui.succeedAction('Skill /magi installed successfully');
   } else {
-    ui.failAction('Failed to install /magi-ai skill');
+    ui.failAction('Failed to install /magi skill');
   }
 
   // 3. Claude Desktop
@@ -48,7 +48,7 @@ export async function runSetup() {
   // Summary
   const successCount = results.filter(r => r.success || r.skipped).length;
   if (successCount > 0 || skillResult) {
-    ui.logSystem('Setup Complete', `Successfully verified/registered in supported clients. You can now use MAGI directly or type '/magi-ai' in Gemini CLI!`);
+    ui.logSystem('Setup Complete', `Successfully verified/registered in supported clients. You can now use MAGI directly or type '/magi' in Gemini CLI!`);
   } else {
     ui.logSystem('Setup Incomplete', 'Could not find supported AI clients. You may need to manually add "magi-orchestrator" to your MCP config.');
   }
@@ -56,12 +56,22 @@ export async function runSetup() {
 
 async function installGeminiSkill(): Promise<boolean> {
   try {
-    const skillsDir = path.join(os.homedir(), '.gemini', 'skills', 'magi-ai');
-    await fs.mkdir(skillsDir, { recursive: true });
+    const skillsBaseDir = path.join(os.homedir(), '.gemini', 'skills');
+    const oldSkillDir = path.join(skillsBaseDir, 'magi-ai');
+    const newSkillDir = path.join(skillsBaseDir, 'magi');
+
+    // Clean up old skill if it exists
+    try {
+      await fs.rm(oldSkillDir, { recursive: true, force: true });
+    } catch {
+      // Ignore errors during cleanup
+    }
+
+    await fs.mkdir(newSkillDir, { recursive: true });
 
     const skillContent = `---
-name: magi-ai
-description: "Triggers the MAGI MCP server to orchestrate a task iteration."
+name: magi
+description: "Orquestador de tareas autónomas. Ejecuta y monitorea agentes para resolver problemas complejos."
 ---
 # MAGI Orchestrator Skill
 
@@ -69,13 +79,13 @@ description: "Triggers the MAGI MCP server to orchestrate a task iteration."
 You are an expert task orchestrator. When the user invokes this skill, you must delegate the task execution to the MAGI MCP server.
 
 ## Instructions
-1. The user will provide a task name (e.g., \`/magi-ai fix-auth-bug\`).
+1. The user will provide a task name (e.g., \`/magi fix-auth-bug\`).
 2. You MUST immediately call the \`run_magi_iteration\` MCP tool.
 3. Pass the provided text as the \`taskName\` argument to the tool.
 4. Present the results returned by MAGI cleanly to the user. Do not ask for permission before calling the tool.
 `;
 
-    await fs.writeFile(path.join(skillsDir, 'SKILL.md'), skillContent);
+    await fs.writeFile(path.join(newSkillDir, 'SKILL.md'), skillContent);
     return true;
   } catch (error) {
     return false;
@@ -116,11 +126,19 @@ async function registerInConfig(configPath: string, clientType: 'gemini' | 'clau
       config.mcpServers = {};
     }
 
-    if (config.mcpServers['magi']) {
-      return { success: true, skipped: true }; // Already registered
+    const serverKey = clientType === 'gemini' ? 'magi-mcp' : 'magi';
+
+    // If already registered with the correct key, skip
+    if (config.mcpServers[serverKey]) {
+      return { success: true, skipped: true };
     }
 
-    config.mcpServers['magi'] = {
+    // Remove old 'magi' key if we are in gemini and it exists
+    if (clientType === 'gemini' && config.mcpServers['magi']) {
+      delete config.mcpServers['magi'];
+    }
+
+    config.mcpServers[serverKey] = {
       command: process.platform === 'win32' ? 'magi-ai.cmd' : 'magi-ai',
       args: []
     };

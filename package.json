@@ -1,10 +1,11 @@
 {
   "name": "magi-orchestrator",
   "version": "1.2.1",
-  "description": "MAGI (formerly Ralph) - Task-based AI orchestrator and MCP server",
+  "description": "MAGI - Orquestador de tareas autónomas - Task-based AI orchestrator and MCP server",
   "main": "dist/index.js",
   "type": "module",
   "bin": {
+    "magi": "./bin/magi-mcp.js",
     "magi-ai": "./bin/magi-mcp.js",
     "magi-orchestrator": "./bin/magi-mcp.js"
   },

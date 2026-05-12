@@ -39,19 +39,19 @@ export async function startMcpServer() {
     tools: [
       {
         name: 'run_magi_iteration',
-        description: 'Run a single MAGI iteration for a task',
+        description: 'Execute a single autonomous iteration for a specified task using the current agent and MAGI engine.',
         inputSchema: {
           type: 'object',
           properties: {
-            taskName: { type: 'string' },
-            agentName: { type: 'string' },
+            taskName: { type: 'string', description: 'Name of the task to run' },
+            agentName: { type: 'string', description: 'Optional agent adapter name (gemini-cli, claude, openai, ollama)' },
           },
           required: ['taskName'],
         },
       },
       {
         name: 'get_magi_status',
-        description: 'Get current status of MAGI engine',
+        description: 'Retrieve the current operational status, configuration, and state directory of the MAGI engine.',
         inputSchema: { type: 'object', properties: {} },
       },
     ],

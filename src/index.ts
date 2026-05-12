@@ -8,7 +8,7 @@ const program = new Command();
 
 program
   .name('magi-ai')
-  .description('MAGI - Task-based AI orchestrator and MCP server')
+  .description('Orquestador de tareas autónomas - Task-based AI orchestrator and MCP server')
   .version('1.2.1');
 
 // Default command: Start MCP Server
