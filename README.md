@@ -48,8 +48,8 @@ magi-ai run "build-auth-layer"
 
 ### Option 2: The "Annexed" Mode (Skill Injection)
 Open your **Gemini CLI** and use the native skill:
-> `/magi run "fix-login-bug"`
-> *MAGI funcionará en segundo plano y reportará el progreso directamente en tu sesión de chat.*
+> `/magi fix-login-bug`
+> *MAGI will run in the background and report progress directly in your chat session.*
 
 ---
 

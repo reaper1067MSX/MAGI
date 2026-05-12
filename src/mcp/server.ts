@@ -39,7 +39,7 @@ export async function startMcpServer() {
     tools: [
       {
         name: 'run_magi_iteration',
-        description: 'Execute a single autonomous iteration for a specified task using the current agent and MAGI engine.',
+        description: 'Execute one MAGI iteration for a task using `agentName` when provided, otherwise the configured default agent.',
         inputSchema: {
           type: 'object',
           properties: {
@@ -51,7 +51,7 @@ export async function startMcpServer() {
       },
       {
         name: 'get_magi_status',
-        description: 'Retrieve the current operational status, configuration, and state directory of the MAGI engine.',
+        description: 'Retrieve MAGI runtime status, default agent, available agent adapters, and resolved state directory.',
         inputSchema: { type: 'object', properties: {} },
       },
     ],
@@ -75,11 +75,17 @@ export async function startMcpServer() {
         };
       }
       case 'get_magi_status': {
+        const status = {
+          status: 'active',
+          defaultAgent: config.defaultAgent,
+          availableAgents: Object.keys(agents),
+          stateDirectory: engine.getStateDir(),
+        };
         return {
           content: [
             {
               type: 'text',
-              text: `MAGI Engine Active. State Dir: ${engine.getStateDir()}`,
+              text: JSON.stringify(status, null, 2),
             },
           ],
         };

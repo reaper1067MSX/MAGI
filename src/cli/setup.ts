@@ -71,7 +71,7 @@ async function installGeminiSkill(): Promise<boolean> {
 
     const skillContent = `---
 name: magi
-description: "Orquestador de tareas autónomas. Ejecuta y monitorea agentes para resolver problemas complejos."
+description: "Task orchestrator skill that executes and monitors MAGI iterations for complex problems."
 ---
 # MAGI Orchestrator Skill
 
@@ -139,7 +139,7 @@ async function registerInConfig(configPath: string, clientType: 'gemini' | 'clau
     }
 
     config.mcpServers[serverKey] = {
-      command: process.platform === 'win32' ? 'magi-ai.cmd' : 'magi-ai',
+      command: process.platform === 'win32' ? 'magi.cmd' : 'magi',
       args: []
     };
 
