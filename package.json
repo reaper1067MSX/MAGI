@@ -19,7 +19,7 @@
     "build": "tsc",
     "test": "vitest run",
     "prepare": "npm run build",
-    "postinstall": "node ./bin/magi-mcp.js setup",
+    "postinstall": "node -e \"const fs=require('fs'); if(fs.existsSync('./dist/index.js')){ require('child_process').spawnSync('node', ['./bin/magi-mcp.js', 'setup'], {stdio: 'inherit'}) }\"",
     "release": "node ./scripts/bump-version.js && npm publish"
   },
   "repository": {
