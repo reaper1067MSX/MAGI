@@ -334,7 +334,7 @@ EOF
     log_info "Next steps:"
     echo "  1. cd $install_dir"
     echo "  2. Create MAGI_TASK.md with your task"
-    echo "  3. Run: magi-ai run \"test\""
+    echo "  3. Run: magi run \"test\""
     echo "     (Or legacy: ./magi.sh)"
     echo ""
 }

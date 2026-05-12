@@ -385,7 +385,7 @@ Quick Start:
   1. Edit MAGI_TASK.md with your task
 
   2. Run MAGI:
-     magi-ai run "test"          # Run locally
+     magi run "test"             # Run locally (Interactive)
      .\magi.bat                  # Gemini (legacy script)
      .\magi.bat openai           # OpenAI GPT-4o
      .\magi.bat ollama           # Local Ollama

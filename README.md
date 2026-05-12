@@ -1,5 +1,5 @@
 <div align="center">
-  <h1>🧙‍♂️ MAGI Orchestrator (magi-ai)</h1>
+  <h1>🧙‍♂️ MAGI Orchestrator (magi)</h1>
   <p><strong>The Task-Based AI Orchestrator & MCP Server</strong></p>
   <p>
     <a href="https://www.npmjs.com/package/magi-orchestrator"><img src="https://img.shields.io/npm/v/magi-orchestrator?color=cyan&label=npm" alt="NPM Version" /></a>
@@ -11,9 +11,9 @@
 
 ---
 
-**MAGI-AI** is a high-performance, task-based AI orchestrator designed to bring structure, persistence, and specialized intelligence to autonomous development. It operates as a bridge between your preferred AI models and your local environment, functioning simultaneously as a **powerful interactive CLI** and a background **Model Context Protocol (MCP) server**.
+**MAGI** is a high-performance, task-based AI orchestrator designed to bring structure, persistence, and specialized intelligence to autonomous development. It operates as a bridge between your preferred AI models and your local environment, functioning simultaneously as a **powerful interactive CLI** and a background **Model Context Protocol (MCP) server**.
 
-## 🌟 Why MAGI-AI? (Key Benefits)
+## 🌟 Why MAGI? (Key Benefits)
 
 *   **Professional Interactive UI**: Inspired by Claude Code, featuring dimmed reasoning for better focus, real-time action spinners, and clean result boxes.
 *   **Hybrid Power**: Use it directly in your terminal for dedicated focus, or annex it to your favorite AI client (Gemini CLI, Claude Desktop) via MCP.
@@ -25,7 +25,7 @@
 
 ## 📦 Installation
 
-Install **MAGI Orchestrator** globally via npm to get the `magi-ai` command:
+Install **MAGI Orchestrator** globally via npm to get the `magi` command:
 
 ```bash
 # Official installation
@@ -43,7 +43,7 @@ Run tasks directly from your terminal with rich, stylized feedback.
 
 ```bash
 # Execute a task iteration interactively
-magi-ai run "build-auth-layer"
+magi run "build-auth-layer"
 ```
 
 ### Option 2: The "Annexed" Mode (Skill Injection)
@@ -95,10 +95,10 @@ MAGI keeps your project context clean by orchestrating everything inside the `.m
 
 | Command | Description |
 |---------|-------------|
-| `magi-ai run <task>` | Start/Continue a task iteration interactively. |
-| `magi-ai setup` | Manually trigger auto-registration in AI clients. |
-| `magi-ai serve` | Start the MCP server (STDIO). |
-| `magi-ai --version` | Report the current version (v1.2.0). |
+| `magi run <task>` | Start/Continue a task iteration interactively. |
+| `magi setup` | Manually trigger auto-registration in AI clients. |
+| `magi serve` | Start the MCP server (STDIO). |
+| `magi --version` | Report the current version (v1.2.1). |
 
 ---
 
