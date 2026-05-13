@@ -1,6 +1,6 @@
 {
   "name": "magi-orchestrator",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "description": "MAGI - Task-based AI orchestrator and MCP server",
   "main": "dist/index.js",
   "type": "module",
